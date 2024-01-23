@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     def get_allowed_users(self) -> list[int]:
         return [int(id) for id in self.ALLOWED_BOT_USERS.split(",")]
 
-    def get_notification_user(self) -> str:
+    def get_notification_user(self) -> int:
         return self.get_allowed_users()[0]
 
 
