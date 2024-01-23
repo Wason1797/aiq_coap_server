@@ -22,6 +22,7 @@ alembic = "^1.13.1"
 pydantic-settings = "^2.1.0"
 mypy = "^1.8.0"
 aiocoap = "^0.4.7"
+aiogram = "^3.3.0"
 
 
 [build-system]

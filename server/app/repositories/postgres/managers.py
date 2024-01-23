@@ -1,19 +1,29 @@
-from pydantic import ValidationError
-from app.serializers.request import AiqDataFromStation
-from app.repositories.postgres.models import SensorData
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from datetime import datetime
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func
+
+from app.repositories.postgres.models import SensorData
+from app.serializers.request import AiqDataFromStation
+
+
+SUMMARY_TEMPLATE = """
+Row Count: {}
+co2: {} ppm
+temp: {} C
+hum: {} H%
+aqi: {}
+eco2: {} ppm
+tvoc: {} ppb
+sensor_id: {}
+location_id: {}
+"""
 
 
 class AiqDataManager:
     @staticmethod
-    async def save_sensor_data(session: AsyncSession, data: str) -> None:
-        try:
-            station_data = AiqDataFromStation.model_validate_json(data)
-        except ValidationError:
-            print("Error validatig payload")
-            return
+    async def save_sensor_data(session: AsyncSession, data: str, location_id: str) -> None:
+        station_data = AiqDataFromStation.model_validate_json(data)
 
         async with session as session:
             session.add(
@@ -26,8 +36,25 @@ class AiqDataManager:
                     aqi=station_data.aqi,
                     sensor_id=station_data.sensor_id,
                     timestamp=str(int(datetime.utcnow().timestamp())),
-                    location_id="default",
+                    location_id=location_id,
                 )
             )
 
             await session.commit()
+
+    @staticmethod
+    async def get_summary(session: AsyncSession) -> str:
+        query = select(SensorData).order_by(SensorData.id.desc()).limit(1)
+        result = (await session.scalars(query)).first()
+        count = await session.scalar(select(func.count()).select_from(SensorData))
+        return SUMMARY_TEMPLATE.format(
+            count,
+            int(result.co2) / 1000000,
+            int(result.temperature) / 1000000,
+            int(result.humidity) / 1000000,
+            result.aqi,
+            result.eco2,
+            result.tvoc,
+            result.sensor_id,
+            result.location_id,
+        )

@@ -13,6 +13,8 @@ services:
       POSTGRESQL_DB_PASS: ${POSTGRESQL_DB_PASS}
       POSTGRESQL_DB_HOST: postgres
       POSTGRESQL_DB_PORT: 5432
+      ALLOWED_BOT_USERS: ${ALLOWED_BOT_USERS}
+      BOT_TOKEN: ${BOT_TOKEN}
 
   postgres:
     image: postgres:14.2
