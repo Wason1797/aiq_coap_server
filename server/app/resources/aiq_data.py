@@ -1,13 +1,12 @@
-import aiocoap.resource as resource
-from aiocoap import CHANGED, INTERNAL_SERVER_ERROR, Message
+import traceback
+
+import aiocoap.resource as resource  # type: ignore
+from aiocoap import CHANGED, INTERNAL_SERVER_ERROR, Message  # type: ignore
 
 from app.config.env_manager import get_settings
 from app.repositories.postgres.database import PostgresqlConnector
 from app.repositories.postgres.managers import AiqDataManager
-
 from app.telegram.bot import ManagementBot
-
-import traceback
 
 EnvManager = get_settings()
 
