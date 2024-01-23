@@ -1,0 +1,29 @@
+[tool.ruff]
+ignore = ["E203","E231","E261","E402","E501","E711","E712","E722","W605","E741"]
+line-length = 150
+
+[tool.mypy]
+plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
+
+[tool.poetry]
+name = "server"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ruff = "^0.1.14"
+pydantic = "^2.5.3"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.25"}
+asyncpg = "^0.29.0"
+alembic = "^1.13.1"
+pydantic-settings = "^2.1.0"
+mypy = "^1.8.0"
+aiocoap = "^0.4.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

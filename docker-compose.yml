@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - "5683:5683/udp"
+    depends_on:
+      - postgres
+    environment:
+      POSTGRESQL_DB_USER: ${POSTGRESQL_DB_USER}
+      POSTGRESQL_DB_PASS: ${POSTGRESQL_DB_PASS}
+      POSTGRESQL_DB_HOST: postgres
+      POSTGRESQL_DB_PORT: 5432
+
+  postgres:
+    image: postgres:14.2
+    ports:
+      - "5438:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRESQL_DB_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_DB_PASS}
+      POSTGRES_DB: sensordata
+    volumes:
+      - "/var/lib/postgresql/data"
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SERVER_ROOT_URL=http://my.grafana.server/
+      - GF_INSTALL_PLUGINS=grafana-clock-panel
+    ports:
+      - "8080:3000"
+    volumes:
+      - "grafana_storage:/var/lib/grafana"
+volumes:
+  grafana_storage: {}
