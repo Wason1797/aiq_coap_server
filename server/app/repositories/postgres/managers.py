@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import Callable
 
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
 
-from app.repositories.postgres.models import SensorData
 from app.serializers.request import AiqDataFromStation
 
+from .models import SensorData
 
 SUMMARY_TEMPLATE = """
 Row Count: {}
