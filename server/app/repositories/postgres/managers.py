@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Callable
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
@@ -43,18 +44,21 @@ class AiqDataManager:
             await session.commit()
 
     @staticmethod
-    async def get_summary(session: AsyncSession) -> str:
+    async def get_summary(session_maker: Callable[[], AsyncSession]) -> str:
         query = select(SensorData).order_by(SensorData.id.desc()).limit(1)
-        result = (await session.scalars(query)).first()
-        count = await session.scalar(select(func.count()).select_from(SensorData))
-        return SUMMARY_TEMPLATE.format(
-            count,
-            int(result.co2) / 1000000,
-            int(result.temperature) / 1000000,
-            int(result.humidity) / 1000000,
-            result.aqi,
-            result.eco2,
-            result.tvoc,
-            result.sensor_id,
-            result.location_id,
-        )
+        async with session_maker() as session:
+            result = (await session.scalars(query)).first()
+            if not result:
+                return "Database is empty"
+            count = await session.scalar(select(func.count()).select_from(SensorData))
+            return SUMMARY_TEMPLATE.format(
+                count,
+                int(result.co2) / 1000000,
+                int(result.temperature) / 1000000,
+                int(result.humidity) / 1000000,
+                result.aqi,
+                result.eco2,
+                result.tvoc,
+                result.sensor_id,
+                result.location_id,
+            )
