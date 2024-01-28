@@ -1,12 +1,8 @@
 from enum import StrEnum
 from functools import lru_cache
+from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
-class ServerType(StrEnum):
-    MAIN = "MAIN"
-    BORDER_ROUTER = "BORDER_ROUTER"
 
 
 class Settings(BaseSettings):
@@ -18,7 +14,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     LOCATION_ID: str = "default"
     ENV: str = "DEV"
-    SERVER_TYPE: ServerType = ServerType.MAIN
+    MAIN_SERVER_URI: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=".env")
 
@@ -32,6 +28,9 @@ class Settings(BaseSettings):
 
     def get_notification_user(self) -> int:
         return self.get_allowed_users()[0]
+
+    def should_forward(self) -> bool:
+        return bool(self.MAIN_SERVER_URI)
 
 
 @lru_cache
