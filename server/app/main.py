@@ -22,11 +22,16 @@ async def main() -> None:
     server.add_resource(["aiq-data"], AiqDataResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
 
     print("Starting AIQ Server")
+    try:
+        server_context = await aiocoap.Context.create_server_context(server)
+        await ManagementBot.start_polling()
 
-    await aiocoap.Context.create_server_context(server)
-    await ManagementBot.start_polling()
-
-    await asyncio.get_running_loop().create_future()
+        await asyncio.get_running_loop().create_future()
+    except KeyboardInterrupt:
+        print("Shutting Down")
+        await server_context.shutdown()
+        await ManagementBot.stop_polling()
+        return
 
 
 if __name__ == "__main__":

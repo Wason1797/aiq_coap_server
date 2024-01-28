@@ -23,6 +23,10 @@ class ManagementBot:
         return await cls._dispatcher.start_polling(cls.bot())
 
     @classmethod
+    async def stop_polling(cls) -> None:
+        return await cls._dispatcher.stop_polling()
+
+    @classmethod
     def bot(cls) -> Bot:
         if not cls._bot:
             raise Exception("Bot not initialized")
