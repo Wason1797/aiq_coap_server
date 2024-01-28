@@ -15,11 +15,11 @@ EnvManager = get_settings()
 
 async def main() -> None:
     PostgresqlConnector.init_db(EnvManager.get_db_url())
-    ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session()))
+    ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
+    ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
 
     server = resource.Site()
-
-    server.add_resource(["aiq-data"], AiqDataResource())
+    server.add_resource(["aiq-data"], AiqDataResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
 
     print("Starting AIQ Server")
 
