@@ -1,6 +1,12 @@
+from enum import StrEnum
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class ServerType(StrEnum):
+    MAIN = "MAIN"
+    BORDER_ROUTER = "BORDER_ROUTER"
 
 
 class Settings(BaseSettings):
@@ -12,6 +18,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     LOCATION_ID: str = "default"
     ENV: str = "DEV"
+    SERVER_TYPE: ServerType = ServerType.MAIN
 
     model_config = SettingsConfigDict(env_file=".env")
 
