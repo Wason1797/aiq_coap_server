@@ -1,16 +1,15 @@
 import asyncio
+from functools import partial
 
 import aiocoap  # type: ignore
 import aiocoap.resource as resource  # type: ignore
 
 from app.config.env_manager import get_settings
+from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.postgres.database import PostgresqlConnector
 from app.repositories.postgres.managers import AiqDataManager
 from app.resources import AiqDataResource
 from app.telegram.bot import ManagementBot
-from functools import partial
-
-from app.repositories.aiq_coap.client import CoapClient
 
 EnvManager = get_settings()
 
