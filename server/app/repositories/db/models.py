@@ -1,10 +1,10 @@
 from sqlalchemy import INTEGER, VARCHAR, PrimaryKeyConstraint
 from sqlalchemy.orm import mapped_column, Mapped
 
-from app.repositories.postgres.database import PostgresqlConnector
+from app.repositories.db.connector import BaseDBConnector
 
 
-class SensorData(PostgresqlConnector.Base):
+class SensorData(BaseDBConnector.Base):
     __tablename__ = "sensor_data"
 
     id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
