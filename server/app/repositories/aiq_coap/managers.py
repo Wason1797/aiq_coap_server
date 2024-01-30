@@ -16,7 +16,7 @@ class AiqDataCoapForwarder:
                 print(f"Forwarded {response.code}, {response.payload}")
             except Exception:
                 trace = traceback.format_exc()
-                await ManagementBot.send_notification(f"An error occurred while forwarding:\n {trace}")
+                await ManagementBot.send_notification(f"An error occurred while forwarding to {coap_client.server_uri}:\n {trace}")
 
         task = asyncio.create_task(forward_data_task())  # Schedule the task in the background
         return task
