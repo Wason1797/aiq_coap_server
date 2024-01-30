@@ -33,7 +33,8 @@ async def main() -> None:
 
     print("Starting AIQ Server")
     try:
-        server_context = await aiocoap.Context.create_server_context(server)
+        binds = ("localhost", None) if EnvManager.is_dev() else None
+        server_context = await aiocoap.Context.create_server_context(server, bind=binds)
         await ManagementBot.start_polling()
 
         await asyncio.get_running_loop().create_future()

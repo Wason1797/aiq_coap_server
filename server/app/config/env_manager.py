@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     def should_forward(self) -> bool:
         return bool(self.MAIN_SERVER_URI)
 
+    def is_dev(self) -> bool:
+        return self.ENV.upper() == "DEV"
+
 
 @lru_cache
 def get_settings() -> Settings:
