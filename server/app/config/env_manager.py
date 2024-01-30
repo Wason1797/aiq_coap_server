@@ -5,6 +5,11 @@ from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class StationType(StrEnum):
+    BORDER_ROUTER = "BORDER_ROUTER"
+    MAIN_SERVER = "MAIN_SERVER"
+
+
 class Settings(BaseSettings):
     POSTGRESQL_DB_HOST: str
     POSTGRESQL_DB_USER: str
@@ -12,7 +17,8 @@ class Settings(BaseSettings):
     POSTGRESQL_DB_PORT: str
     ALLOWED_BOT_USERS: str
     BOT_TOKEN: str
-    LOCATION_ID: str = "default"
+    LOCATION_ID: str
+    STATION_TYPE: StationType
     ENV: str = "DEV"
     MAIN_SERVER_URI: Optional[str] = None
 
