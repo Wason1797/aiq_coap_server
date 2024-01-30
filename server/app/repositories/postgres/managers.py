@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Callable
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.serializers.request import AiqDataFromStation
@@ -62,3 +62,15 @@ class AiqDataManager:
                 result.sensor_id,
                 result.location_id,
             )
+
+    @staticmethod
+    async def truncate_db(session_maker: Callable[[], AsyncSession]) -> None:
+        query = select(SensorData.id).order_by(SensorData.id.desc()).limit(120)
+        async with session_maker() as session:
+            ids = (await session.scalars(query)).all()
+            if not ids:
+                return "Database is empty"
+
+            await session.execute(delete(SensorData).where(SensorData.id.in_(ids)))
+            await session.commit()
+        return "Truncate succesful"
