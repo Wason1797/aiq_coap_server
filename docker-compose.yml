@@ -15,6 +15,7 @@ services:
       BOT_TOKEN: ${BOT_TOKEN}
       STATION_TYPE: ${STATION_TYPE}
       LOCATION_ID: ${LOCATION_ID}
+      ENV: PROD
 
   postgres:
     image: postgres:14.2
