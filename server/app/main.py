@@ -18,6 +18,7 @@ async def main() -> None:
     PostgresqlConnector.init_db(EnvManager.get_db_url())
     ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
     ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
+    ManagementBot.register_commad("truncate", partial(AiqDataManager.truncate_db, PostgresqlConnector.get_session))
 
     coap_client = await CoapClient.get_instance(EnvManager.MAIN_SERVER_URI)
 
