@@ -9,12 +9,12 @@ services:
     depends_on:
       - postgres
     environment:
-      POSTGRESQL_DB_USER: ${POSTGRESQL_DB_USER}
-      POSTGRESQL_DB_PASS: ${POSTGRESQL_DB_PASS}
-      POSTGRESQL_DB_HOST: postgres
-      POSTGRESQL_DB_PORT: 5432
+      POSTGRESQL_DB_URL: "${POSTGRESQL_DB_USER}:${POSTGRESQL_DB_PASS}@postgres"
+      MYSQL_DB_URL: ${MYSQL_DB_URL}
       ALLOWED_BOT_USERS: ${ALLOWED_BOT_USERS}
       BOT_TOKEN: ${BOT_TOKEN}
+      STATION_TYPE: ${STATION_TYPE}
+      LOCATION_ID: ${LOCATION_ID}
 
   postgres:
     image: postgres:14.2
@@ -38,5 +38,20 @@ services:
       - "8080:3000"
     volumes:
       - "grafana_storage:/var/lib/grafana"
+
+  mysql:
+    image: mysql:8
+    ports:
+      - 3307:3306
+    volumes:
+      - ~/apps/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=S3cret
+      - MYSQL_PASSWORD=An0thrS3crt
+      - MYSQL_USER=test_user
+      - MYSQL_DATABASE=sensordata
+
+    profiles: [dev]
+
 volumes:
   grafana_storage: {}
