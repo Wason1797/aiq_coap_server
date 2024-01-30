@@ -83,18 +83,18 @@ async def command_start_handler(message: Message):
 
 
 @ManagementBot.dispatcher.message(Command("summary"))
-async def command_summary_handler(message: Message, cmd_obj: CommandObject):
-    if not ManagementBot.is_requested_location(cmd_obj.args):
+async def command_summary_handler(message: Message, command: CommandObject):
+    if not ManagementBot.is_requested_location(command.args):
         return
 
-    if not ManagementBot.has_command(cmd_obj.command):
+    if not ManagementBot.has_command(command.command):
         await message.answer("Command not supported")
 
     if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
         await message.answer("User not allowed")
         return
 
-    callback = ManagementBot.get_command(cmd_obj.command)
+    callback = ManagementBot.get_command(command.command)
     try:
         result = await callback()
     except Exception:
@@ -106,21 +106,21 @@ async def command_summary_handler(message: Message, cmd_obj: CommandObject):
 
 
 @ManagementBot.dispatcher.message(Command("truncate"))
-async def command_truncate_db_handler(message: Message, cmd_obj: CommandObject):
+async def command_truncate_db_handler(message: Message, command: CommandObject):
     if ManagementBot.is_main_server():
         return
 
-    if not ManagementBot.is_requested_location(cmd_obj.args):
+    if not ManagementBot.is_requested_location(command.args):
         return
-
-    if not ManagementBot.has_command(cmd_obj.command):
-        await message.answer("Command not supported")
 
     if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
         await message.answer("User not allowed")
         return
 
-    callback = ManagementBot.get_command(cmd_obj.command)
+    if not ManagementBot.has_command(command.command):
+        await message.answer("Command not supported")
+
+    callback = ManagementBot.get_command(command.command)
     try:
         result = await callback()
     except Exception:
