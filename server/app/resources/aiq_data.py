@@ -5,7 +5,7 @@ import aiocoap.resource as resource  # type: ignore
 from aiocoap import CHANGED, INTERNAL_SERVER_ERROR, Message  # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories.postgres.managers import AiqDataManager
+from app.managers.aiq_manager import AiqDataManager
 from app.telegram.bot import ManagementBot
 from app.repositories.aiq_coap.managers import AiqDataCoapForwarder
 from app.repositories.aiq_coap.client import CoapClient

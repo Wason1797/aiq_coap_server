@@ -5,9 +5,10 @@ import aiocoap  # type: ignore
 import aiocoap.resource as resource  # type: ignore
 
 from app.config.env_manager import get_settings
+from app.managers.aiq_manager import AiqDataManager
 from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.postgres.database import PostgresqlConnector
-from app.repositories.postgres.managers import AiqDataManager
+from app.repositories.mysql.database import MysqlConnector
 from app.resources import AiqDataResource
 from app.telegram.bot import ManagementBot
 
@@ -15,8 +16,11 @@ EnvManager = get_settings()
 
 
 async def main() -> None:
-    PostgresqlConnector.init_db(EnvManager.get_db_url())
-    ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
+    PostgresqlConnector.init_db(EnvManager.get_main_db_url())
+    MysqlConnector.init_db(EnvManager.get_backup_db_url())
+    ManagementBot.init_bot(
+        EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user(), EnvManager.STATION_TYPE, EnvManager.LOCATION_ID
+    )
     ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
     ManagementBot.register_commad("truncate", partial(AiqDataManager.truncate_db, PostgresqlConnector.get_session))
 
