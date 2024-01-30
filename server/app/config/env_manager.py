@@ -11,10 +11,8 @@ class StationType(StrEnum):
 
 
 class Settings(BaseSettings):
-    POSTGRESQL_DB_HOST: str
-    POSTGRESQL_DB_USER: str
-    POSTGRESQL_DB_PASS: str
-    POSTGRESQL_DB_PORT: str
+    POSTGRESQL_DB_URL: str
+    MYSQL_DB_URL: str
     ALLOWED_BOT_USERS: str
     BOT_TOKEN: str
     LOCATION_ID: str
@@ -24,10 +22,11 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env")
 
-    def get_db_url(self) -> str:
-        return (
-            f"postgresql+asyncpg://{self.POSTGRESQL_DB_USER}:{self.POSTGRESQL_DB_PASS}@{self.POSTGRESQL_DB_HOST}:{self.POSTGRESQL_DB_PORT}/sensordata"
-        )
+    def get_main_db_url(self) -> str:
+        return f"postgresql+asyncpg://{self.POSTGRESQL_DB_URL}/sensordata"
+
+    def get_backup_db_url(self) -> str:
+        return f"mysql+asyncmy://{self.MYSQL_DB_URL}/sensordata/?charset=utf8mb4"
 
     def get_allowed_users(self) -> list[int]:
         return [int(id) for id in self.ALLOWED_BOT_USERS.split(",")]

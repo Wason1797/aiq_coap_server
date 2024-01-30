@@ -8,14 +8,21 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from app.config.env_manager import get_settings
-from app.repositories.postgres.database import PostgresqlConnector
+from app.repositories.db.connector import BaseDBConnector
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 EnvManager = get_settings()
-print("DEBUG ", EnvManager.get_db_url())
-config.set_main_option("sqlalchemy.url", EnvManager.get_db_url())
+
+target = context.get_x_argument(as_dictionary=True).get("target", "local")
+
+if target == "local":
+    config.set_main_option("sqlalchemy.url", EnvManager.get_main_db_url())
+elif target == "backup":
+    config.set_main_option("sqlalchemy.url", EnvManager.get_backup_db_url())
+else:
+    raise ValueError(f"Unknow target '{target}' database for migrations")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -26,9 +33,9 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.repositories.postgres import models  # noqa: F401
+from app.repositories.db import models  # noqa: F401
 
-target_metadata = PostgresqlConnector.Base.metadata
+target_metadata = BaseDBConnector.Base.metadata
 
 
 # other values from the config, defined by the needs of env.py,
