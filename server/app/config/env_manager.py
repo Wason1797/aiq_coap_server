@@ -26,7 +26,7 @@ class Settings(BaseSettings):
         return f"postgresql+asyncpg://{self.POSTGRESQL_DB_URL}/sensordata"
 
     def get_backup_db_url(self) -> str:
-        return f"mysql+asyncmy://{self.MYSQL_DB_URL}/sensordata/?charset=utf8mb4"
+        return f"mysql+asyncmy://{self.MYSQL_DB_URL}/sensordata?charset=utf8mb4"
 
     def get_allowed_users(self) -> list[int]:
         return [int(id) for id in self.ALLOWED_BOT_USERS.split(",")]
@@ -36,6 +36,9 @@ class Settings(BaseSettings):
 
     def should_forward(self) -> bool:
         return bool(self.MAIN_SERVER_URI)
+
+    def is_main_server(self) -> bool:
+        return self.STATION_TYPE == StationType.MAIN_SERVER
 
     def is_dev(self) -> bool:
         return self.ENV.upper() == "DEV"
