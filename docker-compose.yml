@@ -45,14 +45,15 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - ~/apps/mysql:/var/lib/mysql
+      - mysql:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=S3cret
-      - MYSQL_PASSWORD=An0thrS3crt
-      - MYSQL_USER=test_user
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_PASSWORD=password
+      - MYSQL_USER=user
       - MYSQL_DATABASE=sensordata
 
     profiles: [dev]
 
 volumes:
   grafana_storage: {}
+  mysql: {}
