@@ -28,7 +28,10 @@ async def main() -> None:
 
     server = resource.Site()
     server.add_resource(
-        ["aiq-data"], AiqDataResource(EnvManager.should_forward(), EnvManager.LOCATION_ID, PostgresqlConnector.get_session, coap_client)
+        ["aiq-data"],
+        AiqDataResource(
+            EnvManager.is_main_server(), EnvManager.LOCATION_ID, PostgresqlConnector.get_session, MysqlConnector.get_session, coap_client
+        ),
     )
 
     print("Starting AIQ Server")
