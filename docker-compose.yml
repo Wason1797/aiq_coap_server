@@ -7,9 +7,9 @@ services:
     ports:
       - "5683:5683/udp"
     depends_on:
-      - postgres
+      - postgresdb
     environment:
-      POSTGRESQL_DB_URL: "${POSTGRESQL_DB_USER}:${POSTGRESQL_DB_PASS}@postgres"
+      POSTGRESQL_DB_URL: "${POSTGRESQL_DB_USER}:${POSTGRESQL_DB_PASS}@postgresdb"
       MYSQL_DB_URL: ${MYSQL_DB_URL}
       ALLOWED_BOT_USERS: ${ALLOWED_BOT_USERS}
       BOT_TOKEN: ${BOT_TOKEN}
@@ -17,7 +17,7 @@ services:
       LOCATION_ID: ${LOCATION_ID}
       ENV: PROD
 
-  postgres:
+  postgresdb:
     image: postgres:14.2
     ports:
       - "5438:5432"

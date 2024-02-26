@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt update && apt upgrade -y && apt-get install software-properties-common -y && add-apt-repository ppa:deadsnakes/ppa
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install python3.11-full build-essential libssl-dev libffi-dev \
-    python3-dev python3-pip cargo pkg-config -y
+    python3.11-dev python3-pip cargo pkg-config -y
 
 
 RUN pip3 install --upgrade pip
@@ -17,6 +17,5 @@ COPY . .
 
 RUN poetry install --only main
 
-CMD poetry run alembic upgrade head
 
 ENTRYPOINT ["bash", "runner.sh"]

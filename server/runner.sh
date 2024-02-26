@@ -1,3 +1,4 @@
+sleep 5
 poetry run alembic upgrade head
 sleep 5
 
