@@ -1,15 +1,21 @@
-FROM python:3.12-bookworm
+FROM ubuntu:22.04 as base
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get install build-essential libssl-dev libffi-dev \
-    python3-dev cargo pkg-config
+RUN apt update && apt upgrade -y && apt-get install software-properties-common -y && add-apt-repository ppa:deadsnakes/ppa
 
-RUN pip install poetry==1.7.1
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install python3.11-full build-essential libssl-dev libffi-dev \
+    python3-dev python3-pip cargo pkg-config -y
+
+
+RUN pip3 install --upgrade pip
+RUN pip3 install poetry==1.7.1
+
+FROM base
 
 COPY . .
 
-RUN poetry install
+RUN poetry install --only main
 
 CMD poetry run alembic upgrade head
 
