@@ -6,35 +6,45 @@ import aiocoap.resource as resource  # type: ignore
 
 from app.config.env_manager import get_settings
 from app.managers.aiq_manager import AiqDataManager
+from app.managers.br_manager import BorderRouterManager
 from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.postgres.database import PostgresqlConnector
 from app.repositories.mysql.database import MysqlConnector
 from app.resources import AiqDataResource, AiqManagementTruncateResource, AiqManagementSummaryResource
 from app.telegram.bot import ManagementBot
+from app.controllers.border_router import BorderRouterController
 
 EnvManager = get_settings()
 
 
 async def main() -> None:
+    # Init external resources
     PostgresqlConnector.init_db(EnvManager.get_main_db_url())
     MysqlConnector.init_db(EnvManager.get_backup_db_url())
     ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
-    ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
-    # ManagementBot.register_commad("truncate", partial(, PostgresqlConnector.get_session))
 
-    coap_client = await CoapClient.get_instance(EnvManager.MAIN_SERVER_URI)
+    client_context = aiocoap.Context.create_client_context()
+    main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, client_context)
 
     server = resource.Site()
     server.add_resource(
         ["aiq-data"],
         AiqDataResource(
-            EnvManager.is_main_server(), EnvManager.LOCATION_ID, PostgresqlConnector.get_session, MysqlConnector.get_session, coap_client
+            EnvManager.is_main_server(), EnvManager.LOCATION_ID, PostgresqlConnector.get_session, MysqlConnector.get_session, main_coap_client
         ),
     )
 
     if not EnvManager.is_main_server():  # Enable management interface for border routers
         server.add_resource(["aiq-management", "summary"], AiqManagementSummaryResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
         server.add_resource(["aiq-management", "truncate"], AiqManagementTruncateResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
+
+    # Register bot commands to manage border routers and main server
+    ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
+    ManagementBot.register_commad("register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session))
+    ManagementBot.register_commad(
+        "summary_station", partial(BorderRouterController.query_br_summary, PostgresqlConnector.get_session, client_context)
+    )
+    ManagementBot.register_commad("truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, client_context))
 
     print("Starting AIQ Server")
     try:
@@ -48,6 +58,7 @@ async def main() -> None:
     except (SystemExit, KeyboardInterrupt):
         print("Shutting Down")
         await server_context.shutdown()
+        await client_context.shutdown()
         await ManagementBot.stop_polling()
         await ManagementBot.close_client_session()
         return

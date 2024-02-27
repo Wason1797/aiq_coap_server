@@ -26,7 +26,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRESQL_DB_PASS}
       POSTGRES_DB: sensordata
     volumes:
-      - "/var/lib/postgresql/data"
+      - "postgresql:/var/lib/postgresql/data"
 
   grafana:
     image: grafana/grafana-enterprise
@@ -57,3 +57,4 @@ services:
 volumes:
   grafana_storage: {}
   mysql: {}
+  postgresql: {}

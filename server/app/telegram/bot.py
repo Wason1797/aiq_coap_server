@@ -1,5 +1,5 @@
 import traceback
-from typing import Any, Awaitable, Callable, Iterable, Optional, TypeVarTuple
+from typing import Awaitable, Callable, Iterable, Optional, TypeVarTuple
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command, CommandObject
@@ -89,6 +89,32 @@ async def command_summary_handler(message: Message, command: CommandObject):
     await message.answer(result)
 
 
+@ManagementBot.dispatcher.message(Command("register_br"))
+async def command_register_br_handler(message: Message, command: CommandObject):
+    if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
+        await message.answer("User not allowed")
+        return
+
+    if not ManagementBot.has_command(command.command):
+        await message.answer("Command not supported")
+        return
+
+    if not command.args:
+        await message.answer("location_id and ip_addr needed")
+        return
+
+    callback = ManagementBot.get_command(command.command)
+    try:
+        location_id, ip_addr = command.args.split()
+        result = await callback(location_id, ip_addr)
+    except Exception:
+        trace = traceback.format_exc()
+        await message.answer(f"An error occurred in summary:\n {trace}")
+        return
+
+    await message.answer(result)
+
+
 @ManagementBot.dispatcher.message(Command("summary_station"))
 async def command_summary_station_handler(message: Message, command: CommandObject):
     if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
@@ -97,10 +123,16 @@ async def command_summary_station_handler(message: Message, command: CommandObje
 
     if not ManagementBot.has_command(command.command):
         await message.answer("Command not supported")
+        return
+
+    if not command.args:
+        await message.answer("location_id and sensor_id needed")
+        return
 
     callback = ManagementBot.get_command(command.command)
     try:
-        result = await callback()
+        location_id, sensor_id = command.args.split()
+        result = await callback(location_id, sensor_id)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")
@@ -117,10 +149,15 @@ async def command_truncate_db_handler(message: Message, command: CommandObject):
 
     if not ManagementBot.has_command(command.command):
         await message.answer("Command not supported")
+        return
+
+    if not command.args:
+        await message.answer("location_id and sensor_id needed")
+        return
 
     callback = ManagementBot.get_command(command.command)
     try:
-        result = await callback()
+        result = await callback(command.args)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in truncate:\n {trace}")
