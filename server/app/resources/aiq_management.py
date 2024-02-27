@@ -12,12 +12,10 @@ from app.telegram.bot import ManagementBot
 class AiqManagementSummaryResource(resource.Resource):
     def __init__(
         self,
-        is_main_server: bool,
         location_id: str,
         main_session: Callable[[], AsyncSession],
     ):
         super().__init__()
-        self.is_main_server = is_main_server
         self.location_id = location_id
         self.main_session = main_session
 
@@ -37,12 +35,10 @@ class AiqManagementSummaryResource(resource.Resource):
 class AiqManagementTruncateResource(resource.Resource):
     def __init__(
         self,
-        is_main_server: bool,
         location_id: str,
         main_session: Callable[[], AsyncSession],
     ):
         super().__init__()
-        self.is_main_server = is_main_server
         self.location_id = location_id
         self.main_session = main_session
 

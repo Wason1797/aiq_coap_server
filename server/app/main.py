@@ -9,7 +9,7 @@ from app.managers.aiq_manager import AiqDataManager
 from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.postgres.database import PostgresqlConnector
 from app.repositories.mysql.database import MysqlConnector
-from app.resources import AiqDataResource
+from app.resources import AiqDataResource, AiqManagementTruncateResource, AiqManagementSummaryResource
 from app.telegram.bot import ManagementBot
 
 EnvManager = get_settings()
@@ -31,6 +31,10 @@ async def main() -> None:
             EnvManager.is_main_server(), EnvManager.LOCATION_ID, PostgresqlConnector.get_session, MysqlConnector.get_session, coap_client
         ),
     )
+
+    if not EnvManager.is_main_server():  # Enable management interface for border routers
+        server.add_resource(["aiq-management", "summary"], AiqManagementSummaryResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
+        server.add_resource(["aiq-management", "truncate"], AiqManagementTruncateResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
 
     print("Starting AIQ Server")
     try:
