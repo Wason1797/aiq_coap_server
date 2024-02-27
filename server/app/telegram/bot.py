@@ -1,9 +1,11 @@
 import traceback
-from typing import Awaitable, Callable, Iterable, Optional
+from typing import Any, Awaitable, Callable, Iterable, Optional, TypeVarTuple
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.types import Message
+
+Params = TypeVarTuple("Params")
 
 
 class ManagementBot:
@@ -11,7 +13,7 @@ class ManagementBot:
     _bot: Optional[Bot] = None
     _allow_list: Optional[tuple] = None
     _notification_user: Optional[int] = None
-    _commands: dict[str, Callable[[], Awaitable[str]]] = dict()
+    _commands: dict[str, Callable[[*Params], Awaitable[str]]] = dict()
 
     @classmethod
     def init_bot(cls, token: str, allow_list: Iterable, admin_user: int):
@@ -42,11 +44,11 @@ class ManagementBot:
         return key in cls._commands
 
     @classmethod
-    def get_command(cls, key: str) -> Callable[[], Awaitable[str]]:
+    def get_command(cls, key: str) -> Callable[[*Params], Awaitable[str]]:
         return cls._commands[key]
 
     @classmethod
-    def register_commad(cls, key: str, callback: Callable[[], Awaitable[str]]) -> None:
+    def register_commad(cls, key: str, callback: Callable[[*Params], Awaitable[str]]) -> None:
         cls._commands[key] = callback
 
     @classmethod
@@ -69,6 +71,26 @@ async def command_start_handler(message: Message):
 
 @ManagementBot.dispatcher.message(Command("summary"))
 async def command_summary_handler(message: Message, command: CommandObject):
+    if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
+        await message.answer("User not allowed")
+        return
+
+    if not ManagementBot.has_command(command.command):
+        await message.answer("Command not supported")
+
+    callback = ManagementBot.get_command(command.command)
+    try:
+        result = await callback()
+    except Exception:
+        trace = traceback.format_exc()
+        await message.answer(f"An error occurred in summary:\n {trace}")
+        return
+
+    await message.answer(result)
+
+
+@ManagementBot.dispatcher.message(Command("summary_station"))
+async def command_summary_station_handler(message: Message, command: CommandObject):
     if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
         await message.answer("User not allowed")
         return

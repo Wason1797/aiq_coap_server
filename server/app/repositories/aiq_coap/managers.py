@@ -1,4 +1,5 @@
 import traceback
+from typing import Optional
 from app.serializers.request import AiqDataFromStation
 from app.telegram.bot import ManagementBot
 from .client import CoapClient
@@ -24,21 +25,23 @@ class AiqDataCoapForwarder:
 
 class AiqBorderRouterCoapClient:
     @staticmethod
-    async def get_summary(coap_client: CoapClient, sensor_id: int) -> str | None:
+    async def get_summary(coap_client: CoapClient, sensor_id: int) -> Optional[str]:
         try:
             response = await coap_client.get_payload(str(sensor_id))
             return response.payload
         except Exception:
             trace = traceback.format_exc()
-            return await ManagementBot.send_notification(
+            await ManagementBot.send_notification(
                 f"An error occurred while getting summary for sensor {sensor_id}, BR: {coap_client.server_uri}:\n {trace}"
             )
+            return None
 
     @staticmethod
-    async def truncate_database(coap_client: CoapClient) -> str | None:
+    async def truncate_database(coap_client: CoapClient) -> Optional[str]:
         try:
             response = await coap_client.delete_payload("")
             return response.payload
         except Exception:
             trace = traceback.format_exc()
-            return await ManagementBot.send_notification(f"An error occurred while truncating database for BR {coap_client.server_uri}:\n {trace}")
+            await ManagementBot.send_notification(f"An error occurred while truncating database for BR {coap_client.server_uri}:\n {trace}")
+            return None
