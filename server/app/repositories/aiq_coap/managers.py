@@ -24,7 +24,7 @@ class AiqDataCoapForwarder:
 
 class AiqBorderRouterCoapClient:
     @staticmethod
-    async def get_summary(coap_client: CoapClient, sensor_id: int) -> str:
+    async def get_summary(coap_client: CoapClient, sensor_id: int) -> str | None:
         try:
             return await coap_client.get_payload(str(sensor_id))
         except Exception:
@@ -34,7 +34,7 @@ class AiqBorderRouterCoapClient:
             )
 
     @staticmethod
-    async def truncate_database(coap_client: CoapClient) -> str:
+    async def truncate_database(coap_client: CoapClient) -> str | None:
         try:
             return await coap_client.delete_payload()
         except Exception:
