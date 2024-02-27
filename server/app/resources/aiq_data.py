@@ -29,32 +29,20 @@ class AiqDataResource(resource.Resource):
 
     async def render_put(self, request) -> Message:
         try:
-            try:
-                message = request.payload.decode("ascii")
-            except Exception as ex:
-                ex.add_note("Error in payload decoding or serialization")
-                raise ex
+            message = request.payload.decode("ascii")
 
             if not self.is_main_server and self.coap_client:
                 AiqDataCoapForwarder.forward_aiq_data(self.coap_client, message)
 
-            should_backup = False
-
             try:
-                session = self.main_session()
-                await AiqDataManager.save_sensor_data(session, message, self.location_id)
+                await AiqDataManager.save_sensor_data(self.main_session, message, self.location_id)
             except Exception as ex:
-                should_backup = True
-                ex.add_note("Error when storing in the main database")
+                ex.add_note("Could not store sensor data in main DB")
+                await AiqDataManager.save_sensor_data(self.backup_session, message, self.location_id)
                 raise ex
 
-            if self.is_main_server or should_backup:
-                try:
-                    backup_session = self.backup_session()
-                    await AiqDataManager.save_sensor_data(backup_session, message, self.location_id)
-                except Exception as ex:
-                    ex.add_note("Error when storing in the backup database")
-                    raise ex
+            if self.is_main_server:
+                await AiqDataManager.save_sensor_data(self.backup_session, message, self.location_id)
 
         except Exception:
             trace = traceback.format_exc()
