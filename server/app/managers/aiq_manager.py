@@ -22,10 +22,10 @@ location_id: {}
 
 class AiqDataManager:
     @staticmethod
-    async def save_sensor_data(session: AsyncSession, data: str, location_id: str) -> None:
+    async def save_sensor_data(session_maker: Callable[[], AsyncSession], data: str, location_id: str) -> None:
         station_data = AiqDataFromStation.model_validate_json(data)
 
-        async with session as session:
+        async with session_maker() as session:
             session.add(
                 SensorData(
                     co2=station_data.co2.to_str_number(),
@@ -52,6 +52,34 @@ class AiqDataManager:
             count = await session.scalar(select(func.count()).select_from(SensorData))
             return SUMMARY_TEMPLATE.format(
                 count,
+                int(result.co2) / 1000000,
+                int(result.temperature) / 1000000,
+                int(result.humidity) / 1000000,
+                result.aqi,
+                result.eco2,
+                result.tvoc,
+                result.sensor_id,
+                result.location_id,
+            )
+
+    @staticmethod
+    async def get_summary_by_sensor_and_location(session_maker: Callable[[], AsyncSession], sensor_id: int, location_id: str) -> str:
+        query = (
+            select(SensorData)
+            .where(SensorData.sensor_id == sensor_id)
+            .where(SensorData.location_id == location_id)
+            .order_by(SensorData.id.desc())
+            .limit(1)
+        )
+
+        async with session_maker() as session:
+            result = (await session.scalars(query)).first()
+
+            if not result:
+                return f"Results for sensor {sensor_id} in location {location_id} not found"
+
+            return SUMMARY_TEMPLATE.format(
+                1,
                 int(result.co2) / 1000000,
                 int(result.temperature) / 1000000,
                 int(result.humidity) / 1000000,
