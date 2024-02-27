@@ -32,6 +32,7 @@ class AiqDataResource(resource.Resource):
             message = request.payload.decode("ascii")
 
             if not self.is_main_server and self.coap_client:
+                print("WE ARE IN")
                 AiqDataCoapForwarder.forward_aiq_data(self.coap_client, message)
 
             try:
