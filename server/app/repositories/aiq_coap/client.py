@@ -1,4 +1,4 @@
-from aiocoap import Context, Message, PUT  # type: ignore
+from aiocoap import Context, Message, PUT, GET, DELETE  # type: ignore
 
 from typing import Optional
 
@@ -25,6 +25,22 @@ class CoapClient:
         if self.context is None:
             raise Exception("Cannot put payload before initialization")
         request = Message(code=PUT, payload=payload.encode(encoding="ascii"), uri=self.server_uri)
+
+        response = await self.context.request(request).response
+        return self.Response(response.code, response.payload)
+
+    async def get_payload(self, payload: str) -> Response:
+        if self.context is None:
+            raise Exception("Cannot get payload before initialization")
+        request = Message(code=GET, payload=payload.encode(encoding="ascii"), uri=self.server_uri)
+
+        response = await self.context.request(request).response
+        return self.Response(response.code, response.payload)
+
+    async def delete_payload(self, payload: str) -> Response:
+        if self.context is None:
+            raise Exception("Cannot delete payload before initialization")
+        request = Message(code=DELETE, payload=payload.encode(encoding="ascii"), uri=self.server_uri)
 
         response = await self.context.request(request).response
         return self.Response(response.code, response.payload)
