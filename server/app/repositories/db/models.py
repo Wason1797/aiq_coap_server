@@ -19,3 +19,13 @@ class SensorData(BaseDBConnector.Base):
     location_id: Mapped[str] = mapped_column(VARCHAR(36), nullable=False)
 
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_sensor_data"),)
+
+
+class BorderRouter(BaseDBConnector.Base):
+    __tablename__ = "border_routers"
+
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
+    ipv4_address: Mapped[str] = mapped_column(VARCHAR(25), nullable=False)
+    location_id: Mapped[str] = mapped_column(VARCHAR(36), nullable=False)
+
+    __table_args__ = (PrimaryKeyConstraint("id", name="pk_border_routers"),)
