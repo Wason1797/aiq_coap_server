@@ -8,8 +8,10 @@ from .client import CoapClient
 
 
 class AiqDataCoapForwarder:
-    @staticmethod
-    def forward_aiq_data(coap_client: CoapClient, data: str) -> asyncio.Task:
+    background_tasks: set = set()
+
+    @classmethod
+    def forward_aiq_data(cls, coap_client: CoapClient, data: str) -> None:
         async def forward_data_task() -> None:
             try:
                 AiqDataFromStation.model_validate_json(data)
@@ -21,7 +23,9 @@ class AiqDataCoapForwarder:
                 await ManagementBot.send_notification(f"An error occurred while forwarding to {coap_client.server_uri}:\n {trace}")
 
         task = asyncio.create_task(forward_data_task())  # Schedule the task in the background
-        return task
+        cls.background_tasks.add(task)
+        task.add_done_callback(cls.background_tasks.discard)
+        return None
 
 
 class AiqBorderRouterCoapClient:
