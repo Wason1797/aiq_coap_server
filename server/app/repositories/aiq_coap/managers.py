@@ -14,6 +14,7 @@ class AiqDataCoapForwarder:
             try:
                 AiqDataFromStation.model_validate_json(data)
                 response = await coap_client.put_payload(data)
+                await asyncio.sleep(0.01)
                 print(f"Forwarded {response.code}, {response.payload}")
             except Exception:
                 trace = traceback.format_exc()
