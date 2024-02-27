@@ -23,7 +23,7 @@ async def main() -> None:
     MysqlConnector.init_db(EnvManager.get_backup_db_url())
     ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
 
-    client_context = aiocoap.Context.create_client_context()
+    client_context = await aiocoap.Context.create_client_context()
     main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, client_context)
 
     server = resource.Site()
