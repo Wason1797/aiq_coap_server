@@ -18,11 +18,9 @@ EnvManager = get_settings()
 async def main() -> None:
     PostgresqlConnector.init_db(EnvManager.get_main_db_url())
     MysqlConnector.init_db(EnvManager.get_backup_db_url())
-    ManagementBot.init_bot(
-        EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user(), EnvManager.STATION_TYPE, EnvManager.LOCATION_ID
-    )
+    ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
     ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
-    ManagementBot.register_commad("truncate", partial(AiqDataManager.truncate_db, PostgresqlConnector.get_session))
+    # ManagementBot.register_commad("truncate", partial(, PostgresqlConnector.get_session))
 
     coap_client = await CoapClient.get_instance(EnvManager.MAIN_SERVER_URI)
 
@@ -38,13 +36,16 @@ async def main() -> None:
     try:
         binds = ("localhost", None) if EnvManager.is_dev() else None
         server_context = await aiocoap.Context.create_server_context(server, bind=binds)
-        await ManagementBot.start_polling()
+
+        if EnvManager.is_main_server():  # Only one instance of the bot can run at the time
+            await ManagementBot.start_polling()
 
         await asyncio.get_running_loop().create_future()
     except (SystemExit, KeyboardInterrupt):
         print("Shutting Down")
         await server_context.shutdown()
         await ManagementBot.stop_polling()
+        await ManagementBot.close_client_session()
         return
 
 
