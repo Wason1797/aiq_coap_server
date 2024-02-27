@@ -10,7 +10,7 @@ class AiqDataManager:
     @staticmethod
     async def register_border_router(session_maker: Callable[[], AsyncSession], ip_addr: str, location_id: str) -> None:
         async with session_maker() as session:
-            query = select(BorderRouter).where(location_id == location_id).limit(1)
+            query = select(BorderRouter).where(BorderRouter.location_id == location_id).limit(1)
             current_br = (await session.scalars(query)).first()
 
             if current_br:
@@ -25,3 +25,9 @@ class AiqDataManager:
                 )
             )
             await session.commit()
+
+    @staticmethod
+    async def get_border_router(session_maker: Callable[[], AsyncSession], location_id: str) -> BorderRouter | None:
+        async with session_maker() as session:
+            query = select(BorderRouter).where(BorderRouter.location_id == location_id).limit(1)
+            return (await session.scalars(query)).first()

@@ -26,17 +26,19 @@ class AiqBorderRouterCoapClient:
     @staticmethod
     async def get_summary(coap_client: CoapClient, sensor_id: int) -> str | None:
         try:
-            return await coap_client.get_payload(str(sensor_id))
+            response = await coap_client.get_payload(str(sensor_id))
+            return response.payload
         except Exception:
             trace = traceback.format_exc()
-            await ManagementBot.send_notification(
+            return await ManagementBot.send_notification(
                 f"An error occurred while getting summary for sensor {sensor_id}, BR: {coap_client.server_uri}:\n {trace}"
             )
 
     @staticmethod
     async def truncate_database(coap_client: CoapClient) -> str | None:
         try:
-            return await coap_client.delete_payload()
+            response = await coap_client.delete_payload("")
+            return response.payload
         except Exception:
             trace = traceback.format_exc()
-            await ManagementBot.send_notification(f"An error occurred while truncating database for BR {coap_client.server_uri}:\n {trace}")
+            return await ManagementBot.send_notification(f"An error occurred while truncating database for BR {coap_client.server_uri}:\n {trace}")
