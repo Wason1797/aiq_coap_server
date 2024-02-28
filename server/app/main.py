@@ -23,7 +23,9 @@ async def main() -> None:
     MysqlConnector.init_db(EnvManager.get_backup_db_url())
     ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
 
-    main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI)
+    binds = ("localhost", None) if EnvManager.is_dev() else None
+    main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
+    main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, main_coap_context)
 
     server = resource.Site()
     server.add_resource(
@@ -40,21 +42,23 @@ async def main() -> None:
     # Register bot commands to manage border routers and main server
     ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
     ManagementBot.register_commad("register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session))
-    ManagementBot.register_commad("summary_station", partial(BorderRouterController.query_br_summary, PostgresqlConnector.get_session))
-    ManagementBot.register_commad("truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session))
+    ManagementBot.register_commad(
+        "summary_station", partial(BorderRouterController.query_br_summary, PostgresqlConnector.get_session, main_coap_context)
+    )
+    ManagementBot.register_commad(
+        "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)
+    )
 
     print("Starting AIQ Server")
     try:
-        binds = ("localhost", None) if EnvManager.is_dev() else None
-        server_context = await aiocoap.Context.create_server_context(server, bind=binds)
-
+        main_coap_context.serversite = server
         if EnvManager.is_main_server():  # Only one instance of the bot can run at the time
             await ManagementBot.start_polling()
 
         await asyncio.get_running_loop().create_future()
     except (SystemExit, KeyboardInterrupt):
         print("Shutting Down")
-        await server_context.shutdown()
+        await main_coap_context.shutdown()
         await ManagementBot.stop_polling()
         await ManagementBot.close_client_session()
         return

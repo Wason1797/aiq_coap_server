@@ -15,6 +15,7 @@ services:
       BOT_TOKEN: ${BOT_TOKEN}
       STATION_TYPE: ${STATION_TYPE}
       LOCATION_ID: ${LOCATION_ID}
+      MAIN_SERVER_URI: ${MAIN_SERVER_URI}
       ENV: PROD
 
   postgresdb:
