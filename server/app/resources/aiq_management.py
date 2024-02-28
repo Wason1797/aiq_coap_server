@@ -29,7 +29,7 @@ class AiqManagementSummaryResource(resource.Resource):
             await ManagementBot.send_notification(f"An error occurred in {self.location_id}:\n {trace}")
             return Message(code=INTERNAL_SERVER_ERROR, payload="")
 
-        return Message(code=CONTENT, payload=summary)
+        return Message(code=CONTENT, payload=summary.encode("ascii"))
 
 
 class AiqManagementTruncateResource(resource.Resource):
@@ -51,4 +51,4 @@ class AiqManagementTruncateResource(resource.Resource):
             await ManagementBot.send_notification(f"An error occurred in {self.location_id}:\n {trace}")
             return Message(code=INTERNAL_SERVER_ERROR, payload="")
 
-        return Message(code=CONTENT, payload=truncate_result)
+        return Message(code=CONTENT, payload=truncate_result.encode("ascii"))
