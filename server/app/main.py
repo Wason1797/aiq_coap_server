@@ -23,8 +23,7 @@ async def main() -> None:
     MysqlConnector.init_db(EnvManager.get_backup_db_url())
     ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
 
-    client_context = await aiocoap.Context.create_client_context()
-    main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, client_context)
+    main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI)
 
     server = resource.Site()
     server.add_resource(
@@ -41,10 +40,8 @@ async def main() -> None:
     # Register bot commands to manage border routers and main server
     ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
     ManagementBot.register_commad("register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session))
-    ManagementBot.register_commad(
-        "summary_station", partial(BorderRouterController.query_br_summary, PostgresqlConnector.get_session, client_context)
-    )
-    ManagementBot.register_commad("truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, client_context))
+    ManagementBot.register_commad("summary_station", partial(BorderRouterController.query_br_summary, PostgresqlConnector.get_session))
+    ManagementBot.register_commad("truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session))
 
     print("Starting AIQ Server")
     try:
@@ -58,7 +55,6 @@ async def main() -> None:
     except (SystemExit, KeyboardInterrupt):
         print("Shutting Down")
         await server_context.shutdown()
-        await client_context.shutdown()
         await ManagementBot.stop_polling()
         await ManagementBot.close_client_session()
         return

@@ -10,15 +10,23 @@ class CoapClient:
             self.payload = payload
 
     @classmethod
-    def get_instance(cls, server_uri: Optional[str], context: Context) -> Optional["CoapClient"]:
+    def get_instance(cls, server_uri: Optional[str]) -> Optional["CoapClient"]:
         if not server_uri:
             return None
 
-        return cls(server_uri, context)
+        return cls(server_uri)
 
-    def __init__(self, server_uri: str, context: Context) -> None:
+    def __init__(self, server_uri: str) -> None:
         self.server_uri = server_uri
-        self.context = context
+        self.context = None
+
+    async def __aenter__(self):
+        self.context = await Context.create_client_context()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.context.shutdown()
+        self.context = None
 
     async def put_payload(self, payload: str) -> Response:
         if self.context is None:

@@ -32,8 +32,8 @@ class AiqDataResource(resource.Resource):
             message = request.payload.decode("ascii")
 
             if not self.is_main_server and self.coap_client:
-                print("WE ARE IN")
-                AiqDataCoapForwarder.forward_aiq_data(self.coap_client, message)
+                async with self.coap_client as coap_client:
+                    AiqDataCoapForwarder.forward_aiq_data(coap_client, message)
 
             try:
                 await AiqDataManager.save_sensor_data(self.main_session, message, self.location_id)
