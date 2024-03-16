@@ -1,7 +1,7 @@
 import asyncio
 import traceback
 
-from app.serializers.request import AiqDataFromStation
+
 from app.telegram.bot import ManagementBot
 
 from .client import CoapClient
@@ -15,7 +15,6 @@ class AiqDataCoapForwarder:
         async def forward_data_task() -> None:
             try:
                 print("Forwarding")
-                AiqDataFromStation.model_validate_json(data)
                 response = await coap_client.put_payload(data)
                 await asyncio.sleep(0.01)
                 print(f"Forwarded {response.code}, {response.payload}")

@@ -22,19 +22,17 @@ location_id: {}
 
 class AiqDataManager:
     @staticmethod
-    async def save_sensor_data(session_maker: Callable[[], AsyncSession], data: str, location_id: str) -> None:
-        station_data = AiqDataFromStation.model_validate_json(data)
-
+    async def save_sensor_data(session_maker: Callable[[], AsyncSession], data: AiqDataFromStation, location_id: str) -> None:
         async with session_maker() as session:
             session.add(
                 SensorData(
-                    co2=station_data.co2.to_str_number(),
-                    temperature=station_data.temp.to_str_number(),
-                    humidity=station_data.hum.to_str_number(),
-                    eco2=station_data.eco2,
-                    tvoc=station_data.tvoc,
-                    aqi=station_data.aqi,
-                    sensor_id=station_data.sensor_id,
+                    co2=data.co2.to_str_number(),
+                    temperature=data.temp.to_str_number(),
+                    humidity=data.hum.to_str_number(),
+                    eco2=data.eco2,
+                    tvoc=data.tvoc,
+                    aqi=data.aqi,
+                    sensor_id=data.sensor_id,
                     timestamp=str(int(datetime.utcnow().timestamp())),
                     location_id=location_id,
                 )

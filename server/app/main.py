@@ -11,6 +11,7 @@ from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.postgres.database import PostgresqlConnector
 from app.repositories.mysql.database import MysqlConnector
 from app.resources import AiqDataResource, AiqManagementTruncateResource, AiqManagementSummaryResource
+from app.security.payload_validator import PayloadValidator
 from app.telegram.bot import ManagementBot
 from app.controllers.border_router import BorderRouterController
 
@@ -22,6 +23,7 @@ async def main() -> None:
     PostgresqlConnector.init_db(EnvManager.get_main_db_url())
     MysqlConnector.init_db(EnvManager.get_backup_db_url())
     ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
+    PayloadValidator.init_validator(EnvManager.SECRET_KEY)
 
     binds = ("localhost", None) if EnvManager.is_dev() else None
     main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
@@ -31,7 +33,12 @@ async def main() -> None:
     server.add_resource(
         ["aiq-data"],
         AiqDataResource(
-            EnvManager.is_main_server(), EnvManager.LOCATION_ID, PostgresqlConnector.get_session, MysqlConnector.get_session, main_coap_client
+            EnvManager.is_main_server(),
+            EnvManager.LOCATION_ID,
+            PostgresqlConnector.get_session,
+            MysqlConnector.get_session,
+            main_coap_client,
+            PayloadValidator,
         ),
     )
 
