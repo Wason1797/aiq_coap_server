@@ -23,7 +23,7 @@ class ManagementBot:
 
     @classmethod
     async def start_polling(cls) -> None:
-        return await cls.dispatcher.start_polling(cls.bot())
+        return await cls.dispatcher.start_polling(cls.bot(), handle_signals=False)
 
     @classmethod
     async def stop_polling(cls) -> None:
