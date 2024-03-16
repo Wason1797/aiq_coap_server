@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     MYSQL_DB_URL: str
     ALLOWED_BOT_USERS: str
     BOT_TOKEN: str
+    SECRET_KEY: str
     LOCATION_ID: str
     STATION_TYPE: StationType
     ENV: str = "DEV"
