@@ -18,6 +18,8 @@ from app.security.payload_validator import PayloadValidator
 from app.telegram.bot import ManagementBot
 from app.controllers.border_router import BorderRouterController
 
+log = logging.getLogger(__name__)
+
 EnvManager = get_settings()
 
 signal.signal(signal.SIGTERM, lambda: sys.exit(0))
@@ -62,7 +64,7 @@ async def main() -> None:
         "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)
     )
 
-    logging.info("Starting AIQ Server")
+    log.info("Starting AIQ Server")
     asyncio.get_running_loop().add_signal_handler(signal.SIGINT, lambda: sys.exit(0))
     try:
         main_coap_context.serversite = server
@@ -71,13 +73,13 @@ async def main() -> None:
 
         await asyncio.get_running_loop().create_future()
     except SystemExit:
-        logging.info("Shutting Down")
+        log.info("Shutting Down")
         await main_coap_context.shutdown()
         await ManagementBot.stop_polling()
         await ManagementBot.close_client_session()
         return
     finally:
-        logging.info("Shutdown complete")
+        log.info("Shutdown complete")
 
 
 if __name__ == "__main__":

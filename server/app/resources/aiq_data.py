@@ -13,6 +13,8 @@ from app.security.payload_validator import PayloadValidator
 from app.serializers.request import AiqDataFromStation
 from app.telegram.bot import ManagementBot
 
+log = logging.getLogger(__name__)
+
 
 class AiqDataResource(resource.Resource):
     def __init__(
@@ -35,7 +37,7 @@ class AiqDataResource(resource.Resource):
     async def render_put(self, request) -> Message:
         try:
             payload: str = request.payload.decode("ascii")
-            logging.info("[COAP] got request", payload)
+            log.info("[COAP] got request", payload)
 
             sensor_data = cast(AiqDataFromStation, self.payload_validator.validate(payload, AiqDataFromStation))
 
