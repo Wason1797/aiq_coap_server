@@ -1,8 +1,10 @@
+import logging
 import traceback
 from typing import Awaitable, Callable, Iterable, Optional, TypeVarTuple
+
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart, Command, CommandObject
+from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.types import Message
 
 Params = TypeVarTuple("Params")
@@ -58,7 +60,7 @@ class ManagementBot:
     @classmethod
     async def send_notification(cls, text: str) -> None:
         if cls._notification_user is None:
-            print("Admin user not found, cannot send notification")
+            logging.info("Admin user not found, cannot send notification")
             return
         await cls.bot().send_message(cls._notification_user, text)
 

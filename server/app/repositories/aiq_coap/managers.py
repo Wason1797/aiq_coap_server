@@ -1,6 +1,6 @@
 import asyncio
+import logging
 import traceback
-
 
 from app.telegram.bot import ManagementBot
 
@@ -14,10 +14,10 @@ class AiqDataCoapForwarder:
     def forward_aiq_data(cls, coap_client: CoapClient, data: str) -> None:
         async def forward_data_task() -> None:
             try:
-                print("Forwarding")
+                logging.info("Forwarding")
                 response = await coap_client.put_payload(data)
                 await asyncio.sleep(0.01)
-                print(f"Forwarded {response.code}, {response.payload}")
+                logging.info(f"Forwarded {response.code}, {response.payload}")
             except Exception:
                 trace = traceback.format_exc()
                 await ManagementBot.send_notification(f"An error occurred while forwarding to {coap_client.server_uri}:\n {trace}")

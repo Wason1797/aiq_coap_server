@@ -1,6 +1,7 @@
 import asyncio
 import signal
 import sys
+import logging
 from functools import partial
 
 import aiocoap  # type: ignore
@@ -61,7 +62,7 @@ async def main() -> None:
         "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)
     )
 
-    print("Starting AIQ Server")
+    logging.info("Starting AIQ Server")
     asyncio.get_running_loop().add_signal_handler(signal.SIGINT, lambda: sys.exit(0))
     try:
         main_coap_context.serversite = server
@@ -70,13 +71,13 @@ async def main() -> None:
 
         await asyncio.get_running_loop().create_future()
     except SystemExit:
-        print("Shutting Down")
+        logging.info("Shutting Down")
         await main_coap_context.shutdown()
         await ManagementBot.stop_polling()
         await ManagementBot.close_client_session()
         return
     finally:
-        print("Shutdown complete")
+        logging.info("Shutdown complete")
 
 
 if __name__ == "__main__":
