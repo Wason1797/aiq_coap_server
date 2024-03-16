@@ -1,4 +1,6 @@
 import asyncio
+import signal
+import sys
 from functools import partial
 
 import aiocoap  # type: ignore
@@ -16,6 +18,9 @@ from app.telegram.bot import ManagementBot
 from app.controllers.border_router import BorderRouterController
 
 EnvManager = get_settings()
+
+signal.signal(signal.SIGTERM, lambda: sys.exit(0))
+signal.signal(signal.SIGINT, lambda: sys.exit(0))
 
 
 async def main() -> None:
@@ -63,12 +68,14 @@ async def main() -> None:
             await ManagementBot.start_polling()
 
         await asyncio.get_running_loop().create_future()
-    except (SystemExit, KeyboardInterrupt):
+    except SystemExit:
         print("Shutting Down")
         await main_coap_context.shutdown()
         await ManagementBot.stop_polling()
         await ManagementBot.close_client_session()
         return
+    finally:
+        print("Shutdown complete")
 
 
 if __name__ == "__main__":
