@@ -62,6 +62,7 @@ async def main() -> None:
     )
 
     print("Starting AIQ Server")
+    asyncio.get_running_loop().add_signal_handler(signal.SIGINT, lambda: sys.exit(0))
     try:
         main_coap_context.serversite = server
         if EnvManager.is_main_server():  # Only one instance of the bot can run at the time
