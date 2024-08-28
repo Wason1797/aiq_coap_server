@@ -1,6 +1,4 @@
-from typing import Callable
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.types import AsyncSessionMaker
 
 from app.managers.br_manager import BorderRouterManager
 from app.repositories.aiq_coap.client import CoapClient, Context
@@ -9,7 +7,7 @@ from app.repositories.aiq_coap.managers import AiqBorderRouterCoapClient
 
 class BorderRouterController:
     @staticmethod
-    async def query_br_summary(session_maker: Callable[[], AsyncSession], context: Context, location_id: str, sensor_id: int) -> str:
+    async def query_br_summary(session_maker: AsyncSessionMaker, context: Context, location_id: str, sensor_id: int) -> str:
         br = await BorderRouterManager.get_border_router(session_maker, location_id)
 
         if not br:
@@ -19,7 +17,7 @@ class BorderRouterController:
         return await AiqBorderRouterCoapClient.get_summary(coap_client, sensor_id)
 
     @staticmethod
-    async def truncate_br_database(session_maker: Callable[[], AsyncSession], context: Context, location_id: str) -> str:
+    async def truncate_br_database(session_maker: AsyncSessionMaker, context: Context, location_id: str) -> str:
         br = await BorderRouterManager.get_border_router(session_maker, location_id)
 
         if not br:

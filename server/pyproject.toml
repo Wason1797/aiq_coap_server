@@ -1,6 +1,6 @@
 [tool.ruff]
 ignore = ["E203","E231","E261","E402","E501","E711","E712","E722","W605","E741"]
-line-length = 150
+line-length = 130
 
 [tool.mypy]
 plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
@@ -27,6 +27,9 @@ alembic = "^1.13.1"
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.2"
 mypy = "^1.8.0"
+pytest = "^8.3.2"
+aiosqlite = "^0.20.0"
+pytest-asyncio = "^0.24.0"
 
 [build-system]
 requires = ["poetry-core"]

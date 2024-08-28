@@ -22,8 +22,13 @@ log = logging.getLogger(__name__)
 
 EnvManager = get_settings()
 
-signal.signal(signal.SIGTERM, lambda: sys.exit(0))
-signal.signal(signal.SIGINT, lambda: sys.exit(0))
+
+def signal_exit() -> None:
+    sys.exit(0)
+
+
+signal.signal(signal.SIGTERM, signal_exit)  # type: ignore
+signal.signal(signal.SIGINT, signal_exit)  # type: ignore
 
 
 async def main() -> None:
@@ -42,21 +47,30 @@ async def main() -> None:
         ["aiq-data"],
         AiqDataResource(
             EnvManager.is_main_server(),
-            EnvManager.LOCATION_ID,
             PostgresqlConnector.get_session,
             MysqlConnector.get_session,
             main_coap_client,
             PayloadValidator,
+            EnvManager.BORDER_ROUTER_ID,
         ),
     )
 
     if not EnvManager.is_main_server():  # Enable management interface for border routers
-        server.add_resource(["aiq-management", "summary"], AiqManagementSummaryResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
-        server.add_resource(["aiq-management", "truncate"], AiqManagementTruncateResource(EnvManager.LOCATION_ID, PostgresqlConnector.get_session))
+        assert EnvManager.BORDER_ROUTER_ID
+        server.add_resource(
+            ["aiq-management", "summary"],
+            AiqManagementSummaryResource(EnvManager.BORDER_ROUTER_ID, PostgresqlConnector.get_session),
+        )
+        server.add_resource(
+            ["aiq-management", "truncate"],
+            AiqManagementTruncateResource(EnvManager.BORDER_ROUTER_ID, PostgresqlConnector.get_session),
+        )
 
     # Register bot commands to manage border routers and main server
     ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
-    ManagementBot.register_commad("register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session))
+    ManagementBot.register_commad(
+        "register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session)
+    )
     ManagementBot.register_commad(
         "summary_station", partial(BorderRouterController.query_br_summary, PostgresqlConnector.get_session, main_coap_context)
     )

@@ -16,9 +16,9 @@ class Settings(BaseSettings):
     ALLOWED_BOT_USERS: str
     BOT_TOKEN: str
     SECRET_KEY: str
-    LOCATION_ID: str
     STATION_TYPE: StationType
     ENV: str = "DEV"
+    BORDER_ROUTER_ID: Optional[int] = None
     MAIN_SERVER_URI: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=".env")

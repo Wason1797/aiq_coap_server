@@ -1,10 +1,10 @@
 import logging
 import traceback
-from typing import Callable, Optional, Type, cast
+from typing import Optional, Type, cast
 
 import aiocoap.resource as resource  # type: ignore
 from aiocoap import CHANGED, INTERNAL_SERVER_ERROR, Message  # type: ignore
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.types import AsyncSessionMaker
 
 from app.managers.aiq_manager import AiqDataManager
 from app.repositories.aiq_coap.client import CoapClient
@@ -20,15 +20,15 @@ class AiqDataResource(resource.Resource):
     def __init__(
         self,
         is_main_server: bool,
-        location_id: str,
-        main_session: Callable[[], AsyncSession],
-        backup_session: Callable[[], AsyncSession],
+        main_session: AsyncSessionMaker,
+        backup_session: AsyncSessionMaker,
         coap_client: Optional[CoapClient],
         payload_validator: Type[PayloadValidator],
+        border_router_id: Optional[int] = None,
     ):
         super().__init__()
         self.is_main_server = is_main_server
-        self.location_id = location_id
+        self.border_router_id = border_router_id
         self.main_session = main_session
         self.backup_session = backup_session
         self.coap_client = coap_client
@@ -39,24 +39,30 @@ class AiqDataResource(resource.Resource):
             payload: str = request.payload.decode("ascii")
             log.info("[COAP] got request", payload)
 
-            sensor_data = cast(AiqDataFromStation, self.payload_validator.validate(payload, AiqDataFromStation))
+            validated_payload = self.payload_validator.validate(payload, AiqDataFromStation, self.is_main_server)
+
+            sensor_data = cast(AiqDataFromStation, validated_payload.data)
 
             if not self.is_main_server and self.coap_client:
-                AiqDataCoapForwarder.forward_aiq_data(self.coap_client, payload)
+                AiqDataCoapForwarder.forward_aiq_data(self.coap_client, payload, self.border_router_id or 0)
 
             try:
-                await AiqDataManager.save_sensor_data(self.main_session, sensor_data, self.location_id)
+                await AiqDataManager.save_sensor_data(
+                    self.main_session, sensor_data, validated_payload.border_router_id or self.border_router_id
+                )
             except Exception as ex:
                 ex.add_note("Could not store sensor data in main DB")
-                await AiqDataManager.save_sensor_data(self.backup_session, sensor_data, self.location_id)
+                await AiqDataManager.save_sensor_data(
+                    self.backup_session, sensor_data, validated_payload.border_router_id or self.border_router_id
+                )
                 raise ex
 
             if self.is_main_server:
-                await AiqDataManager.save_sensor_data(self.backup_session, sensor_data, self.location_id)
+                await AiqDataManager.save_sensor_data(self.backup_session, sensor_data, validated_payload.border_router_id)
 
         except Exception:
             trace = traceback.format_exc()
-            await ManagementBot.send_notification(f"An error occurred in {self.location_id}:\n {trace}")
+            await ManagementBot.send_notification(f"An error occurred in border router {self.border_router_id}:\n {trace}")
             return Message(code=INTERNAL_SERVER_ERROR, payload="")
 
         return Message(code=CHANGED, payload="")
