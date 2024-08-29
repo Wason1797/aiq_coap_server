@@ -58,7 +58,7 @@ class StationData(BaseDBConnector.Base):
     ens160_data: Mapped[ENS160Data] = relationship("ENS160Data", lazy="joined")
     svm41_data: Mapped[ENS160Data] = relationship("SVM41Data", lazy="joined")
 
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_sensor_data"),)
+    __table_args__ = (PrimaryKeyConstraint("id", name="pk_station_data"),)
 
 
 class BorderRouter(BaseDBConnector.Base):
@@ -66,7 +66,7 @@ class BorderRouter(BaseDBConnector.Base):
 
     id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
     ipv4_address: Mapped[str] = mapped_column(VARCHAR(25), nullable=False)
-    location: Mapped[str] = mapped_column(VARCHAR(36), nullable=False)
+    location: Mapped[str] = mapped_column(VARCHAR(36), nullable=True, default=None)
 
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_border_routers"),)
 

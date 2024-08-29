@@ -81,11 +81,11 @@ def upgrade() -> None:
             ["svm41_data_id"],
             ["svm41_data.id"],
         ),
-        sa.PrimaryKeyConstraint("id", name="pk_sensor_data"),
+        sa.PrimaryKeyConstraint("id", name="pk_station_data"),
     )
     op.drop_table("sensor_data")
-    op.add_column("border_routers", sa.Column("location", sa.VARCHAR(length=36), nullable=False))
     op.drop_column("border_routers", "location_id")
+    op.add_column("border_routers", sa.Column("location", sa.VARCHAR(length=36), nullable=True, default=None))
     # ### end Alembic commands ###
 
 
