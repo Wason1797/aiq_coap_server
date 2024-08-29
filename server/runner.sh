@@ -1,6 +1,6 @@
 sleep 5
-poetry run alembic upgrade head -x target=local
+poetry run alembic -x target=local upgrade head
 sleep 5
-poetry run alembic upgrade head -x target=backup
+poetry run alembic -x target=backup upgrade head
 
 poetry run python -m app.main
