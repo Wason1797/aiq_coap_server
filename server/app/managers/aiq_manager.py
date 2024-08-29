@@ -5,7 +5,7 @@ from typing import Optional
 from app.types import AsyncSessionMaker
 from sqlalchemy import delete, func, select
 
-from app.repositories.db.models import ENS160Data, SCD41Data, SensorData
+from app.repositories.db.models import ENS160Data, SCD41Data, StationData
 from app.serializers.request import AiqDataFromStation
 
 SUMMARY_TEMPLATE = """
@@ -23,7 +23,7 @@ station_id: {}
 """
 
 
-def _render_summary_template(data: SensorData, count: int) -> str:
+def _render_summary_template(data: StationData, count: int) -> str:
     return SUMMARY_TEMPLATE.format(
         count,
         int(data.scd41_data.co2) / 1000000,
@@ -44,7 +44,7 @@ class AiqDataManager:
         data: AiqDataFromStation,
         border_router_id: Optional[int] = None,
     ) -> int:
-        sensor_data = SensorData(
+        sensor_data = StationData(
             station_id=data.station_id,
             timestamp=str(int(datetime.now(tz=timezone.utc).timestamp())),
             border_router_id=border_router_id,
@@ -67,29 +67,29 @@ class AiqDataManager:
         return sensor_data.id
 
     @staticmethod
-    async def get_sensor_data_by_id(session_maker: AsyncSessionMaker, id: int) -> Optional[SensorData]:
+    async def get_sensor_data_by_id(session_maker: AsyncSessionMaker, id: int) -> Optional[StationData]:
         async with session_maker() as session:
-            result = await session.execute(select(SensorData).where(SensorData.id == id))
+            result = await session.execute(select(StationData).where(StationData.id == id))
         return result.scalar_one_or_none()
 
     @staticmethod
     async def get_summary(session_maker: AsyncSessionMaker) -> str:
-        query = select(SensorData).order_by(SensorData.id.desc()).limit(1)
+        query = select(StationData).order_by(StationData.id.desc()).limit(1)
         async with session_maker() as session:
             result = (await session.scalars(query)).first()
             if not result:
                 return "Database is empty"
-            count = await session.scalar(select(func.count()).select_from(SensorData))
+            count = await session.scalar(select(func.count()).select_from(StationData))
 
         return _render_summary_template(result, count or 0)
 
     @staticmethod
     async def get_summary_by_station_id(session_maker: AsyncSessionMaker, station_id: int, border_router_id: int) -> str:
         query = (
-            select(SensorData)
-            .where(SensorData.station_id == station_id)
-            .where(SensorData.border_router_id == border_router_id)
-            .order_by(SensorData.id.desc())
+            select(StationData)
+            .where(StationData.station_id == station_id)
+            .where(StationData.border_router_id == border_router_id)
+            .order_by(StationData.id.desc())
             .limit(1)
         )
 
@@ -103,12 +103,12 @@ class AiqDataManager:
 
     @staticmethod
     async def truncate_db(session_maker: AsyncSessionMaker) -> str:
-        query = select(SensorData.id).order_by(SensorData.id.desc()).limit(120)
+        query = select(StationData.id).order_by(StationData.id.desc()).limit(120)
         async with session_maker() as session:
             ids = (await session.scalars(query)).all()
             if not ids:
                 return "Database is empty"
 
-            await session.execute(delete(SensorData).where(SensorData.id.in_(ids)))
+            await session.execute(delete(StationData).where(StationData.id.in_(ids)))
             await session.commit()
         return "Truncate succesful"

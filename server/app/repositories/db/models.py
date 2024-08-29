@@ -26,13 +26,26 @@ class ENS160Data(BaseDBConnector.Base):
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_ens160_data"),)
 
 
-class SensorData(BaseDBConnector.Base):
+class SVM41Data(BaseDBConnector.Base):
+    __tablename__ = "svm41_data"
+
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
+    temperature: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+    humidity: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+    nox_index: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+    voc_index: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+
+    __table_args__ = (PrimaryKeyConstraint("id", name="pk_esvm41_data"),)
+
+
+class StationData(BaseDBConnector.Base):
     __tablename__ = "station_data"
 
     id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
 
     scd41_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("scd41_data.id"), nullable=True)
     ens160_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("ens160_data.id"), nullable=True)
+    svm41_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("svm41_data.id"), nullable=True)
 
     # Id of the individual sensor station submitting the data
     station_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("stations.id"), nullable=False)
@@ -43,6 +56,7 @@ class SensorData(BaseDBConnector.Base):
 
     scd41_data: Mapped[SCD41Data] = relationship("SCD41Data", lazy="joined")
     ens160_data: Mapped[ENS160Data] = relationship("ENS160Data", lazy="joined")
+    svm41_data: Mapped[ENS160Data] = relationship("SVM41Data", lazy="joined")
 
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_sensor_data"),)
 
