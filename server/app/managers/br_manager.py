@@ -50,6 +50,6 @@ class BorderRouterManager:
             border_routers = (await session.scalars(select(BorderRouter))).all()
 
         if not border_routers:
-            return "No border routers where found"
+            return "No border routers were found"
         summary = "\n".join(f"{br.id}\t{br.ipv4_address}\t{br.location}" for br in border_routers)
         return f"id\tip\tlocation\n{summary}"

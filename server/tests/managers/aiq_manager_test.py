@@ -11,8 +11,8 @@ async def test_save_sensor_data(main_db_session: AsyncSessionMaker, scd41_data_f
 
     data_in_db = await AiqDataManager.get_sensor_data_by_id(main_db_session, db_id)
 
-    assert data_in_db.scd41_data_id is not None
     assert data_in_db is not None
+    assert data_in_db.scd41_data_id is not None
 
 
 @pytest.mark.asyncio
@@ -21,6 +21,7 @@ async def test_get_sensor_data_by_id(main_db_session: AsyncSessionMaker, scd41_d
 
     data_in_db = await AiqDataManager.get_sensor_data_by_id(main_db_session, db_id)
 
+    assert data_in_db is not None
     assert data_in_db.id == db_id
 
 

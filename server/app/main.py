@@ -68,11 +68,9 @@ async def main() -> None:
 
     # Register bot commands to manage border routers and main server
     ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
+    ManagementBot.register_commad("summary_station", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
     ManagementBot.register_commad(
         "register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session)
-    )
-    ManagementBot.register_commad(
-        "summary_station", partial(BorderRouterController.query_br_summary, PostgresqlConnector.get_session, main_coap_context)
     )
     ManagementBot.register_commad(
         "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)

@@ -18,7 +18,7 @@ class BorderRouterController:
 
     @staticmethod
     async def truncate_br_database(session_maker: AsyncSessionMaker, context: Context, border_router_id: int) -> str:
-        br = await BorderRouterManager.get_border_router(session_maker, border_router_id)
+        br = await BorderRouterManager.get_border_router_by_id(session_maker, border_router_id)
 
         if not br:
             return f"BR for id {border_router_id} not found"

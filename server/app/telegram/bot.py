@@ -1,5 +1,6 @@
 import logging
 import traceback
+from functools import wraps
 from typing import Awaitable, Callable, Iterable, Optional, TypeVarTuple
 
 from aiogram import Bot, Dispatcher
@@ -64,6 +65,21 @@ class ManagementBot:
             return
         await cls.bot().send_message(cls._notification_user, text)
 
+    @classmethod
+    def validate_command(cls, fn: Callable) -> Callable:
+        @wraps(fn)
+        async def wrapper(message: Message, command: CommandObject):
+            if message.from_user and message.from_user.id not in cls.get_allow_list():
+                await message.answer("User not allowed")
+                return
+
+            if not cls.has_command(command.command):
+                await message.answer("Command not supported")
+
+            return await fn(message, command)
+
+        return wrapper
+
 
 @ManagementBot.dispatcher.message(CommandStart())
 async def command_start_handler(message: Message):
@@ -72,11 +88,8 @@ async def command_start_handler(message: Message):
 
 
 @ManagementBot.dispatcher.message(Command("summary"))
+@ManagementBot.validate_command
 async def command_summary_handler(message: Message, command: CommandObject):
-    if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
-        await message.answer("User not allowed")
-        return
-
     if not ManagementBot.has_command(command.command):
         await message.answer("Command not supported")
 
@@ -92,15 +105,8 @@ async def command_summary_handler(message: Message, command: CommandObject):
 
 
 @ManagementBot.dispatcher.message(Command("register_br"))
+@ManagementBot.validate_command
 async def command_register_br_handler(message: Message, command: CommandObject):
-    if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
-        await message.answer("User not allowed")
-        return
-
-    if not ManagementBot.has_command(command.command):
-        await message.answer("Command not supported")
-        return
-
     if not command.args:
         await message.answer("location and ip_addr needed")
         return
@@ -118,23 +124,11 @@ async def command_register_br_handler(message: Message, command: CommandObject):
 
 
 @ManagementBot.dispatcher.message(Command("summary_station"))
+@ManagementBot.validate_command
 async def command_summary_station_handler(message: Message, command: CommandObject):
-    if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
-        await message.answer("User not allowed")
-        return
-
-    if not ManagementBot.has_command(command.command):
-        await message.answer("Command not supported")
-        return
-
-    if not command.args:
-        await message.answer("location_id and sensor_id needed")
-        return
-
     callback = ManagementBot.get_command(command.command)
     try:
-        station_id, _ = command.args.split()
-        result = await callback(station_id)
+        result = await callback()
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")
@@ -144,15 +138,8 @@ async def command_summary_station_handler(message: Message, command: CommandObje
 
 
 @ManagementBot.dispatcher.message(Command("truncate"))
+@ManagementBot.validate_command
 async def command_truncate_db_handler(message: Message, command: CommandObject):
-    if message.from_user and message.from_user.id not in ManagementBot.get_allow_list():
-        await message.answer("User not allowed")
-        return
-
-    if not ManagementBot.has_command(command.command):
-        await message.answer("Command not supported")
-        return
-
     if not command.args:
         await message.answer("border_router_id needed")
         return
