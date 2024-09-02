@@ -23,18 +23,27 @@ class BorderRouterManager:
                 else:
                     return f"Border router with id {border_router_id} not found"
             else:
-                session.add(
-                    BorderRouter(
-                        ipv4_address=ip_addr,
-                        location=location,
-                    )
+                new_br = BorderRouter(
+                    ipv4_address=ip_addr,
+                    location=location,
                 )
+                session.add(new_br)
                 await session.commit()
 
-                return f"Border router registered {location} {ip_addr}"
+                return f"Border router registered with id: {new_br.id} | {location} | {ip_addr}"
 
     @staticmethod
     async def get_border_router(session_maker: AsyncSessionMaker, location: str) -> BorderRouter | None:
         async with session_maker() as session:
             query = select(BorderRouter).where(BorderRouter.location == location).limit(1)
             return (await session.scalars(query)).first()
+
+    @staticmethod
+    async def get_border_router_summary(session_maker: AsyncSessionMaker) -> str:
+        async with session_maker() as session:
+            border_routers = (await session.scalars(select(BorderRouter))).all()
+
+        if not border_routers:
+            return "No border routers where found"
+        summary = "\n".join(f"{br.id}\t{br.ipv4_address}\t{br.location}" for br in border_routers)
+        return f"id\tip\tlocation\n{summary}"

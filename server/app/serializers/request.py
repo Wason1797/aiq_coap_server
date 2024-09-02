@@ -37,8 +37,8 @@ class SPS30Data(BaseModel):
 
 
 class AiqDataFromStation(BaseModel):
-    scd41: Optional[SCD41Data] = None
-    svm41: Optional[SVM41Data] = None
-    ens160: Optional[ENS160Data] = None
-    sps30: Optional[SPS30Data] = None
+    scd41_d: Optional[SCD41Data] = None
+    svm41_d: Optional[SVM41Data] = None
+    ens160_d: Optional[ENS160Data] = None
+    sps30_d: Optional[SPS30Data] = None
     station_id: int
