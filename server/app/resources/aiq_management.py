@@ -21,8 +21,7 @@ class AiqManagementSummaryResource(resource.Resource):
 
     async def render_get(self, request) -> Message:
         try:
-            station_id = int(request.payload.decode("ascii"))
-            summary = await AiqDataManager.get_summary_by_station_id(self.main_session, station_id, self.border_router_id)
+            summary = await AiqDataManager.get_summary(self.main_session)
 
         except Exception:
             trace = traceback.format_exc()

@@ -102,13 +102,13 @@ async def command_register_br_handler(message: Message, command: CommandObject):
         return
 
     if not command.args:
-        await message.answer("location_id and ip_addr needed")
+        await message.answer("location and ip_addr needed")
         return
 
     callback = ManagementBot.get_command(command.command)
     try:
-        location_id, ip_addr = command.args.split()
-        result = await callback(location_id, ip_addr)
+        location, ip_addr = command.args.split()
+        result = await callback(location, ip_addr)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")
@@ -133,8 +133,8 @@ async def command_summary_station_handler(message: Message, command: CommandObje
 
     callback = ManagementBot.get_command(command.command)
     try:
-        location_id, sensor_id = command.args.split()
-        result = await callback(location_id, sensor_id)
+        station_id, _ = command.args.split()
+        result = await callback(station_id)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")
@@ -154,7 +154,7 @@ async def command_truncate_db_handler(message: Message, command: CommandObject):
         return
 
     if not command.args:
-        await message.answer("location_id and sensor_id needed")
+        await message.answer("border_router_id needed")
         return
 
     callback = ManagementBot.get_command(command.command)

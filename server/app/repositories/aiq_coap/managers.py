@@ -34,13 +34,13 @@ class AiqDataCoapForwarder:
 
 class AiqBorderRouterCoapClient:
     @staticmethod
-    async def get_summary(coap_client: CoapClient, station_id: int) -> str:
+    async def get_summary(coap_client: CoapClient) -> str:
         try:
-            response = await coap_client.get_payload(str(station_id))
+            response = await coap_client.get_payload("")
             return response.payload
         except Exception:
             trace = traceback.format_exc()
-            return f"An error occurred while getting summary for sensor {station_id}, BR: {coap_client.server_uri}:\n {trace}"
+            return f"An error occurred while getting summary for BR: {coap_client.server_uri}:\n {trace}"
 
     @staticmethod
     async def truncate_database(coap_client: CoapClient) -> str:

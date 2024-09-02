@@ -39,6 +39,12 @@ class BorderRouterManager:
             return (await session.scalars(query)).first()
 
     @staticmethod
+    async def get_border_router_by_id(session_maker: AsyncSessionMaker, id: int) -> BorderRouter | None:
+        async with session_maker() as session:
+            query = select(BorderRouter).where(BorderRouter.id == id).limit(1)
+            return (await session.scalars(query)).first()
+
+    @staticmethod
     async def get_border_router_summary(session_maker: AsyncSessionMaker) -> str:
         async with session_maker() as session:
             border_routers = (await session.scalars(select(BorderRouter))).all()
