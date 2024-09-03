@@ -10,6 +10,7 @@ import aiocoap.resource as resource  # type: ignore
 from app.config.env_manager import get_settings
 from app.managers.aiq_manager import AiqDataManager
 from app.managers.br_manager import BorderRouterManager
+from app.managers.station_manager import StationManager
 from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.postgres.database import PostgresqlConnector
 from app.repositories.mysql.database import MysqlConnector
@@ -67,10 +68,13 @@ async def main() -> None:
         )
 
     # Register bot commands to manage border routers and main server
-    ManagementBot.register_commad("summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
-    ManagementBot.register_commad("summary_station", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
+    ManagementBot.register_commad("data_summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
+    ManagementBot.register_commad("station_summary", partial(StationManager.get_station_summary, PostgresqlConnector.get_session))
     ManagementBot.register_commad(
         "register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session)
+    )
+    ManagementBot.register_commad(
+        "register_station", partial(StationManager.register_sensor_station, PostgresqlConnector.get_session)
     )
     ManagementBot.register_commad(
         "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)

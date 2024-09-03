@@ -87,12 +87,26 @@ async def command_start_handler(message: Message):
         await message.answer(f"Hello {message.from_user.id}")
 
 
-@ManagementBot.dispatcher.message(Command("summary"))
+@ManagementBot.dispatcher.message(Command("data_summary"))
 @ManagementBot.validate_command
 async def command_summary_handler(message: Message, command: CommandObject):
     if not ManagementBot.has_command(command.command):
         await message.answer("Command not supported")
 
+    callback = ManagementBot.get_command(command.command)
+    try:
+        result = await callback()
+    except Exception:
+        trace = traceback.format_exc()
+        await message.answer(f"An error occurred in summary:\n {trace}")
+        return
+
+    await message.answer(result)
+
+
+@ManagementBot.dispatcher.message(Command("station_summary"))
+@ManagementBot.validate_command
+async def command_summary_station_handler(message: Message, command: CommandObject):
     callback = ManagementBot.get_command(command.command)
     try:
         result = await callback()
@@ -113,8 +127,16 @@ async def command_register_br_handler(message: Message, command: CommandObject):
 
     callback = ManagementBot.get_command(command.command)
     try:
-        location, ip_addr = command.args.split()
-        result = await callback(location, ip_addr)
+        cmd_args = command.args.split()
+        id = None
+        if len(cmd_args) == 2:
+            location, ip_addr = cmd_args
+        if len(cmd_args) == 3:
+            location, ip_addr, id = cmd_args
+        else:
+            await message.answer(f"Invalid number of arguments, {cmd_args}")
+            return
+        result = await callback(location, ip_addr, int(id) if id else None)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")
@@ -123,12 +145,17 @@ async def command_register_br_handler(message: Message, command: CommandObject):
     await message.answer(result)
 
 
-@ManagementBot.dispatcher.message(Command("summary_station"))
+@ManagementBot.dispatcher.message(Command("register_station"))
 @ManagementBot.validate_command
-async def command_summary_station_handler(message: Message, command: CommandObject):
+async def command_register_station_handler(message: Message, command: CommandObject):
+    if not command.args:
+        await message.answer("name and Optional[id] needed")
+        return
+
     callback = ManagementBot.get_command(command.command)
     try:
-        result = await callback()
+        name, station_id = command.args.split()
+        result = await callback(name, int(station_id) if station_id else None)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")
