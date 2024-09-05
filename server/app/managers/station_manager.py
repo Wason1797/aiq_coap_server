@@ -31,10 +31,10 @@ class StationManager:
                 return f"Sensor station registered with id: {new_station.id} | {new_station.name}"
 
         async with session_maker() as session:
-            result_main = _upsert_sensor_station(session)
+            result_main = await _upsert_sensor_station(session)
 
         async with backup_session() as backup_session:
-            result_backup = _upsert_sensor_station(backup_session)
+            result_backup = await _upsert_sensor_station(backup_session)
 
         return f"{result_main}\n{result_backup}"
 

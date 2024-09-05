@@ -37,10 +37,10 @@ class BorderRouterManager:
                 return f"Border router registered with id: {new_br.id} | {location} | {ip_addr}"
 
         async with session_maker() as session:
-            main_result = _upsert_border_router(session)
+            main_result = await _upsert_border_router(session)
 
         async with backup_session() as backup_session:
-            backup_result = _upsert_border_router(backup_session)
+            backup_result = await _upsert_border_router(backup_session)
 
         return f"{main_result}\n{backup_result}"
 
