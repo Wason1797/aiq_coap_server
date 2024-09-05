@@ -1,19 +1,17 @@
-import logging
 import traceback
 from typing import Optional, Type, cast
 
 import aiocoap.resource as resource  # type: ignore
 from aiocoap import CHANGED, INTERNAL_SERVER_ERROR, Message  # type: ignore
-from app.types import AsyncSessionMaker
 
+from app.log import log
 from app.managers.aiq_manager import AiqDataManager
 from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.aiq_coap.managers import AiqDataCoapForwarder
 from app.security.payload_validator import PayloadValidator
 from app.serializers.request import AiqDataFromStation
 from app.telegram.bot import ManagementBot
-
-log = logging.getLogger(__name__)
+from app.types import AsyncSessionMaker
 
 
 class AiqDataResource(resource.Resource):

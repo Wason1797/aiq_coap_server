@@ -131,7 +131,7 @@ async def command_register_br_handler(message: Message, command: CommandObject):
         id = None
         if len(cmd_args) == 2:
             location, ip_addr = cmd_args
-        if len(cmd_args) == 3:
+        elif len(cmd_args) == 3:
             location, ip_addr, id = cmd_args
         else:
             await message.answer(f"Invalid number of arguments, {cmd_args}")
@@ -154,7 +154,16 @@ async def command_register_station_handler(message: Message, command: CommandObj
 
     callback = ManagementBot.get_command(command.command)
     try:
-        name, station_id = command.args.split()
+        cmd_args = command.args.split()
+        station_id = None
+        if len(cmd_args) == 1:
+            name = cmd_args[0]
+        elif len(cmd_args) == 2:
+            name, station_id = cmd_args
+        else:
+            await message.answer(f"Invalid number of arguments, {cmd_args}")
+            return
+
         result = await callback(name, int(station_id) if station_id else None)
     except Exception:
         trace = traceback.format_exc()

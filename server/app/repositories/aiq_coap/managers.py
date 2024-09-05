@@ -1,12 +1,10 @@
 import asyncio
-import logging
 import traceback
 
+from app.log import log
 from app.telegram.bot import ManagementBot
 
 from .client import CoapClient
-
-log = logging.getLogger(__name__)
 
 
 class AiqDataCoapForwarder:

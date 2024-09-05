@@ -9,14 +9,15 @@ services:
     depends_on:
       - postgresdb
     environment:
+      PYTHONUNBUFFERED: 1
       POSTGRESQL_DB_URL: "${POSTGRESQL_DB_USER}:${POSTGRESQL_DB_PASS}@postgresdb"
       MYSQL_DB_URL: ${MYSQL_DB_URL}
       ALLOWED_BOT_USERS: ${ALLOWED_BOT_USERS}
       BOT_TOKEN: ${BOT_TOKEN}
-      STATION_TYPE: ${STATION_TYPE}
-      LOCATION_ID: ${LOCATION_ID}
-      MAIN_SERVER_URI: ${MAIN_SERVER_URI}
       SECRET_KEY: ${SECRET_KEY}
+      STATION_TYPE: ${STATION_TYPE}
+      BORDER_ROUTER_ID: ${BORDER_ROUTER_ID}
+      MAIN_SERVER_URI: ${MAIN_SERVER_URI}
       ENV: PROD
 
   postgresdb:

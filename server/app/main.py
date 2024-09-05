@@ -1,25 +1,23 @@
 import asyncio
 import signal
 import sys
-import logging
 from functools import partial
 
 import aiocoap  # type: ignore
 import aiocoap.resource as resource  # type: ignore
 
 from app.config.env_manager import get_settings
+from app.controllers.border_router import BorderRouterController
+from app.log import log
 from app.managers.aiq_manager import AiqDataManager
 from app.managers.br_manager import BorderRouterManager
 from app.managers.station_manager import StationManager
 from app.repositories.aiq_coap.client import CoapClient
-from app.repositories.postgres.database import PostgresqlConnector
 from app.repositories.mysql.database import MysqlConnector
-from app.resources import AiqDataResource, AiqManagementTruncateResource, AiqManagementSummaryResource
+from app.repositories.postgres.database import PostgresqlConnector
+from app.resources import AiqDataResource, AiqManagementSummaryResource, AiqManagementTruncateResource
 from app.security.payload_validator import PayloadValidator
 from app.telegram.bot import ManagementBot
-from app.controllers.border_router import BorderRouterController
-
-log = logging.getLogger(__name__)
 
 EnvManager = get_settings()
 
@@ -34,11 +32,13 @@ signal.signal(signal.SIGINT, signal_exit)  # type: ignore
 
 async def main() -> None:
     # Init external resources
+    log.info("Initializing DB resources")
     PostgresqlConnector.init_db(EnvManager.get_main_db_url())
     MysqlConnector.init_db(EnvManager.get_backup_db_url())
     ManagementBot.init_bot(EnvManager.BOT_TOKEN, EnvManager.get_allowed_users(), EnvManager.get_notification_user())
     PayloadValidator.init_validator(EnvManager.SECRET_KEY)
 
+    log.info("Initializing COAP resources")
     binds = ("localhost", None) if EnvManager.is_dev() else None
     main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
     main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, main_coap_context)
@@ -57,6 +57,7 @@ async def main() -> None:
     )
 
     if not EnvManager.is_main_server():  # Enable management interface for border routers
+        log.info("Initializing BR Management interface")
         assert EnvManager.BORDER_ROUTER_ID
         server.add_resource(
             ["aiq-management", "summary"],
@@ -68,17 +69,21 @@ async def main() -> None:
         )
 
     # Register bot commands to manage border routers and main server
-    ManagementBot.register_commad("data_summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
-    ManagementBot.register_commad("station_summary", partial(StationManager.get_station_summary, PostgresqlConnector.get_session))
-    ManagementBot.register_commad(
-        "register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session)
-    )
-    ManagementBot.register_commad(
-        "register_station", partial(StationManager.register_sensor_station, PostgresqlConnector.get_session)
-    )
-    ManagementBot.register_commad(
-        "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)
-    )
+    if EnvManager.is_main_server():
+        log.info("Initializing Telegram BOT Commands")
+        ManagementBot.register_commad("data_summary", partial(AiqDataManager.get_summary, PostgresqlConnector.get_session))
+        ManagementBot.register_commad(
+            "station_summary", partial(StationManager.get_station_summary, PostgresqlConnector.get_session)
+        )
+        ManagementBot.register_commad(
+            "register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session)
+        )
+        ManagementBot.register_commad(
+            "register_station", partial(StationManager.register_sensor_station, PostgresqlConnector.get_session)
+        )
+        ManagementBot.register_commad(
+            "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)
+        )
 
     log.info("Starting AIQ Server")
     asyncio.get_running_loop().add_signal_handler(signal.SIGINT, lambda: sys.exit(0))
