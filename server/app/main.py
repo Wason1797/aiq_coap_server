@@ -76,10 +76,15 @@ async def main() -> None:
             "station_summary", partial(StationManager.get_station_summary, PostgresqlConnector.get_session)
         )
         ManagementBot.register_commad(
-            "register_br", partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session)
+            "register_station",
+            partial(StationManager.register_sensor_station, PostgresqlConnector.get_session, MysqlConnector.get_session),
         )
         ManagementBot.register_commad(
-            "register_station", partial(StationManager.register_sensor_station, PostgresqlConnector.get_session)
+            "br_summary", partial(BorderRouterManager.get_border_router_summary, PostgresqlConnector.get_session)
+        )
+        ManagementBot.register_commad(
+            "register_br",
+            partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session, MysqlConnector.get_session),
         )
         ManagementBot.register_commad(
             "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)

@@ -1,5 +1,5 @@
 from typing import Optional
-from app.types import AsyncSessionMaker
+from app.types import AsyncSessionMaker, AsyncSession
 from sqlalchemy import select
 
 from app.repositories.db.models import BorderRouter
@@ -8,9 +8,13 @@ from app.repositories.db.models import BorderRouter
 class BorderRouterManager:
     @staticmethod
     async def register_border_router(
-        session_maker: AsyncSessionMaker, ip_addr: str, location: str, border_router_id: Optional[int]
+        session_maker: AsyncSessionMaker,
+        backup_session: AsyncSessionMaker,
+        ip_addr: str,
+        location: str,
+        border_router_id: Optional[int],
     ) -> str:
-        async with session_maker() as session:
+        async def _upsert_border_router(session: AsyncSession):
             if border_router_id:
                 query = select(BorderRouter).where(BorderRouter.id == border_router_id).limit(1)
                 current_br = (await session.scalars(query)).first()
@@ -31,6 +35,14 @@ class BorderRouterManager:
                 await session.commit()
 
                 return f"Border router registered with id: {new_br.id} | {location} | {ip_addr}"
+
+        async with session_maker() as session:
+            main_result = _upsert_border_router(session)
+
+        async with backup_session() as backup_session:
+            backup_result = _upsert_border_router(backup_session)
+
+        return f"{main_result}\n{backup_result}"
 
     @staticmethod
     async def get_border_router(session_maker: AsyncSessionMaker, location: str) -> BorderRouter | None:

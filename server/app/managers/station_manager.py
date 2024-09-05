@@ -1,5 +1,5 @@
 from typing import Optional
-from app.types import AsyncSessionMaker
+from app.types import AsyncSessionMaker, AsyncSession
 from sqlalchemy import select
 
 from app.repositories.db.models import Station
@@ -7,8 +7,10 @@ from app.repositories.db.models import Station
 
 class StationManager:
     @staticmethod
-    async def register_sensor_station(session_maker: AsyncSessionMaker, name: str, station_id: Optional[int]) -> str:
-        async with session_maker() as session:
+    async def register_sensor_station(
+        session_maker: AsyncSessionMaker, backup_session: AsyncSessionMaker, name: str, station_id: Optional[int]
+    ) -> str:
+        async def _upsert_sensor_station(session: AsyncSession):
             if station_id:
                 query = select(Station).where(Station.id == station_id).limit(1)
                 current_station = (await session.scalars(query)).first()
@@ -27,6 +29,14 @@ class StationManager:
                 await session.commit()
 
                 return f"Sensor station registered with id: {new_station.id} | {new_station.name}"
+
+        async with session_maker() as session:
+            result_main = _upsert_sensor_station(session)
+
+        async with backup_session() as backup_session:
+            result_backup = _upsert_sensor_station(backup_session)
+
+        return f"{result_main}\n{result_backup}"
 
     @staticmethod
     async def get_station_by_id(session_maker: AsyncSessionMaker, id: int) -> Station | None:
