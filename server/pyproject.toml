@@ -1,6 +1,6 @@
 [tool.ruff]
 ignore = ["E203","E231","E261","E402","E501","E711","E712","E722","W605","E741"]
-line-length = 130
+line-length = 135
 
 [tool.mypy]
 plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
