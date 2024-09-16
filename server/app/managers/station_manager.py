@@ -41,7 +41,7 @@ class StationManager:
             id_to_send = main_station.id if station_from_backup_db is None else None
             await _upsert_border_router(session, station_from_backup_db, id_to_send)
 
-        return f"Station router registered with id: {main_station.id} | {main_station.name}"
+        return f"Sensor Station registered with id: {main_station.id} | {main_station.name}"
 
     @staticmethod
     async def get_station_by_id(session_maker: AsyncSessionMaker, id: int) -> Station | None:
