@@ -8,35 +8,40 @@ from app.repositories.db.models import Station
 class StationManager:
     @staticmethod
     async def register_sensor_station(
-        session_maker: AsyncSessionMaker, backup_session: AsyncSessionMaker, name: str, station_id: Optional[int]
+        main_session: AsyncSessionMaker, backup_session: AsyncSessionMaker, name: str, station_id: Optional[int]
     ) -> str:
-        async def _upsert_sensor_station(session: AsyncSession):
-            if station_id:
-                query = select(Station).where(Station.id == station_id).limit(1)
-                current_station = (await session.scalars(query)).first()
-
-                if current_station:
-                    current_station.name = name
-                    await session.commit()
-                    return f"Updated Sensor station {current_station.id} {current_station.name}"
-                else:
-                    return f"Sensor station with id {station_id} not found"
-            else:
-                new_station = Station(
-                    name=name,
-                )
-                session.add(new_station)
+        async def _upsert_border_router(session: AsyncSession, station: Station | None, id_from_db: int | None = None) -> Station:
+            if station:
+                station.name = name
                 await session.commit()
+                return station
 
-                return f"Sensor station registered with id: {new_station.id} | {new_station.name}"
+            new_station = Station(
+                name=name,
+            )
+            if id_from_db:
+                new_station.id = id_from_db
 
-        async with session_maker() as session:
-            result_main = await _upsert_sensor_station(session)
+            session.add(new_station)
+            await session.commit()
 
-        async with backup_session() as backup_session:
-            result_backup = await _upsert_sensor_station(backup_session)
+            return new_station
 
-        return f"{result_main}\n{result_backup}"
+        query = select(Station).where(Station.id == station_id).limit(1)
+        async with main_session() as session:
+            station_from_main_db = (await session.scalars(query)).first() if station_id else None
+
+            if station_from_main_db is None and station_id:
+                return f"Sensor Station router with {station_id} not found"
+
+            main_station = await _upsert_border_router(session, station_from_main_db)
+
+        async with backup_session() as session:
+            station_from_backup_db = (await session.scalars(query)).first() if station_id else None
+            id_to_send = main_station.id if station_from_backup_db is None else None
+            await _upsert_border_router(session, station_from_backup_db, id_to_send)
+
+        return f"Station router registered with id: {main_station.id} | {main_station.name}"
 
     @staticmethod
     async def get_station_by_id(session_maker: AsyncSessionMaker, id: int) -> Station | None:
