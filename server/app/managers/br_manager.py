@@ -1,48 +1,52 @@
-from typing import Optional
-from app.types import AsyncSessionMaker, AsyncSession
 from sqlalchemy import select
 
 from app.repositories.db.models import BorderRouter
+from app.types import AsyncSession, AsyncSessionMaker
 
 
 class BorderRouterManager:
     @staticmethod
     async def register_border_router(
-        session_maker: AsyncSessionMaker,
+        main_session: AsyncSessionMaker,
         backup_session: AsyncSessionMaker,
         ip_addr: str,
         location: str,
-        border_router_id: Optional[int],
+        border_router_id: int | None = None,
     ) -> str:
-        async def _upsert_border_router(session: AsyncSession):
-            if border_router_id:
-                query = select(BorderRouter).where(BorderRouter.id == border_router_id).limit(1)
-                current_br = (await session.scalars(query)).first()
-
-                if current_br:
-                    current_br.ipv4_address = ip_addr
-                    current_br.location = location
-                    await session.commit()
-                    return f"Updated Border router {border_router_id} {location} {ip_addr}"
-                else:
-                    return f"Border router with id {border_router_id} not found"
-            else:
-                new_br = BorderRouter(
-                    ipv4_address=ip_addr,
-                    location=location,
-                )
-                session.add(new_br)
+        async def _upsert_border_router(session: AsyncSession, br: BorderRouter | None, id_from_db: int | None = None) -> BorderRouter:
+            if br:
+                br.ipv4_address = ip_addr
+                br.location = location
                 await session.commit()
+                return br
 
-                return f"Border router registered with id: {new_br.id} | {location} | {ip_addr}"
+            new_br = BorderRouter(
+                ipv4_address=ip_addr,
+                location=location,
+            )
+            if id_from_db:
+                new_br.id = id_from_db
 
-        async with session_maker() as session:
-            main_result = await _upsert_border_router(session)
+            session.add(new_br)
+            await session.commit()
 
-        async with backup_session() as backup_session:
-            backup_result = await _upsert_border_router(backup_session)
+            return new_br
 
-        return f"{main_result}\n{backup_result}"
+        query = select(BorderRouter).where(BorderRouter.id == border_router_id).limit(1)
+        async with main_session() as session:
+            br_from_main_db = (await session.scalars(query)).first() if border_router_id else None
+
+            if br_from_main_db is None and border_router_id:
+                return f"Border router with {border_router_id} not found"
+
+            main_br = await _upsert_border_router(session, br_from_main_db)
+
+        async with backup_session() as session:
+            br_from_backup_db = (await session.scalars(query)).first() if border_router_id else None
+            id_to_send = main_br.id if br_from_backup_db is None else None
+            await _upsert_border_router(session, br_from_backup_db, id_to_send)
+
+        return f"Border router registered with id: {main_br.id} | {main_br.location} | {main_br.ipv4_address}"
 
     @staticmethod
     async def get_border_router(session_maker: AsyncSessionMaker, location: str) -> BorderRouter | None:
