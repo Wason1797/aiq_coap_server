@@ -150,7 +150,7 @@ async def command_register_br_handler(message: Message, command: CommandObject):
         else:
             await message.answer(f"Invalid number of arguments, {cmd_args}")
             return
-        result = await callback(location, ip_addr, int(id) if id else None)
+        result = await callback(ip_addr, location, int(id) if id else None)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")
