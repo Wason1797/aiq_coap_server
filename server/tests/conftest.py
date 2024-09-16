@@ -6,19 +6,41 @@ from app.repositories.db.connector import BaseDBConnector
 
 @pytest_asyncio.fixture(scope="function")
 async def main_db_session() -> AsyncGenerator[AsyncSessionMaker, None]:
-    BaseDBConnector.init_db("sqlite+aiosqlite:///:memory")
+    class TestDBConnector(BaseDBConnector):
+        pass
 
-    assert BaseDBConnector.engine
+    TestDBConnector.init_db("sqlite+aiosqlite:///:main_test_db")
 
-    async with BaseDBConnector.engine.begin() as conn:
-        await conn.run_sync(BaseDBConnector.Base.metadata.create_all)
+    assert TestDBConnector.engine
+
+    async with TestDBConnector.engine.begin() as conn:
+        await conn.run_sync(TestDBConnector.Base.metadata.create_all)
 
         try:
-            yield BaseDBConnector.get_session
+            yield TestDBConnector.get_session
         finally:
-            await conn.run_sync(BaseDBConnector.Base.metadata.drop_all)
+            await conn.run_sync(TestDBConnector.Base.metadata.drop_all)
+
+
+@pytest_asyncio.fixture(scope="function")
+async def backup_db_session() -> AsyncGenerator[AsyncSessionMaker, None]:
+    class TestBackupDBConnector(BaseDBConnector):
+        pass
+
+    TestBackupDBConnector.init_db("sqlite+aiosqlite:///:backup_test_db")
+
+    assert TestBackupDBConnector.engine
+
+    async with TestBackupDBConnector.engine.begin() as conn:
+        await conn.run_sync(TestBackupDBConnector.Base.metadata.create_all)
+
+        try:
+            yield TestBackupDBConnector.get_session
+        finally:
+            await conn.run_sync(TestBackupDBConnector.Base.metadata.drop_all)
 
 
 pytest_plugins = [
     "tests.fixtures.sensor_data",
+    "tests.fixtures.br_data",
 ]
