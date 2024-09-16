@@ -112,7 +112,21 @@ async def command_summary_station_handler(message: Message, command: CommandObje
         result = await callback()
     except Exception:
         trace = traceback.format_exc()
-        await message.answer(f"An error occurred in summary:\n {trace}")
+        await message.answer(f"An error occurred in station summary:\n {trace}")
+        return
+
+    await message.answer(result)
+
+
+@ManagementBot.dispatcher.message(Command("br_summary"))
+@ManagementBot.validate_command
+async def command_summary_border_router_handler(message: Message, command: CommandObject):
+    callback = ManagementBot.get_command(command.command)
+    try:
+        result = await callback()
+    except Exception:
+        trace = traceback.format_exc()
+        await message.answer(f"An error occurred in br summary:\n {trace}")
         return
 
     await message.answer(result)

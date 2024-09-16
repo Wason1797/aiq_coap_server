@@ -63,7 +63,7 @@ class BorderRouterManager:
     @staticmethod
     async def get_border_router_summary(session_maker: AsyncSessionMaker) -> str:
         async with session_maker() as session:
-            border_routers = (await session.scalars(select(BorderRouter))).all()
+            border_routers = (await session.scalars(select(BorderRouter).order_by(BorderRouter.id))).all()
 
         if not border_routers:
             return "No border routers were found"

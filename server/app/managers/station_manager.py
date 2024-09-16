@@ -52,7 +52,7 @@ class StationManager:
     @staticmethod
     async def get_station_summary(session_maker: AsyncSessionMaker) -> str:
         async with session_maker() as session:
-            stations = (await session.scalars(select(Station))).all()
+            stations = (await session.scalars(select(Station).order_by(Station.id))).all()
 
         if not stations:
             return "No sensor stations were found"
