@@ -1,8 +1,8 @@
-from app.serializers.request import AiqDataFromStation
-from app.types import AsyncSessionMaker
 import pytest
 
 from app.managers.aiq_manager import AiqDataManager
+from app.serializers.request import AiqDataFromStation
+from app.types import AsyncSessionMaker
 
 
 @pytest.mark.asyncio
