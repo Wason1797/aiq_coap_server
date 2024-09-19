@@ -43,4 +43,7 @@ async def backup_db_session() -> AsyncGenerator[AsyncSessionMaker, None]:
 pytest_plugins = [
     "tests.fixtures.sensor_data",
     "tests.fixtures.br_data",
+    "tests.fixtures.aiq_data",
+    "tests.fixtures.payload_validator",
+    "tests.fixtures.management_bot",
 ]
