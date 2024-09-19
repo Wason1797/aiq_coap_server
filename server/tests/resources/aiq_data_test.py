@@ -1,3 +1,4 @@
+from app.managers.aiq_manager import AiqDataManager
 import pytest
 from aiocoap import CHANGED
 
@@ -14,6 +15,7 @@ async def test_render_put_in_main_server(
     mock_payload_validator,
     mock_aiq_request_scd41_main_server,
     mock_management_bot,
+    mock_station_id,
 ) -> None:
     with mock.patch("app.resources.aiq_data.ManagementBot", mock_management_bot):
         result = await AiqDataResource(
@@ -25,3 +27,11 @@ async def test_render_put_in_main_server(
         ).render_put(mock_aiq_request_scd41_main_server)
 
     assert result.code == CHANGED
+
+    summary_main = await AiqDataManager.get_summary_by_station_id(main_db_session, mock_station_id)
+
+    assert "not found" not in summary_main
+
+    summary_backup = await AiqDataManager.get_summary_by_station_id(backup_db_session, mock_station_id)
+
+    assert "not found" not in summary_backup
