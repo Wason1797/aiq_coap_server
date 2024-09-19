@@ -35,7 +35,7 @@ class AiqDataResource(resource.Resource):
     async def render_put(self, request) -> Message:
         try:
             payload: str = request.payload.decode("ascii")
-            log.info("[COAP] got request", payload)
+            log.info(f"[COAP] got request {payload}")
 
             validated_payload = self.payload_validator.validate(payload, AiqDataFromStation, self.is_main_server)
 
