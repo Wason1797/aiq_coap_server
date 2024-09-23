@@ -1,0 +1,42 @@
+name: Deploy to main server using ssh
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Deploy To Main Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install packages
+        run: |
+          sudo apt-get install openfortivpn
+          curl $CERTS_URL -o geant_ov_rsa_ca.crt -s
+          sudo cp geant_ov_rsa_ca.crt /usr/local/share/ca-certificates/
+          sudo update-ca-certificates
+          touch custom_config
+          echo "host = $VPN_HOST" >> custom_config
+          echo "port = 443" >> custom_config
+          echo "realm = $VPN_REALM" >> custom_config
+          echo "username = $VPN_USER" >> custom_config
+          echo "password = $VPN_PSWD" >> custom_config
+          sudo openfortivpn -c custom_config > program.log 2>&1&
+          sleep 15
+        env:
+          VPN_HOST: ${{secrets.VPN_HOST}}
+          VPN_REALM: ${{secrets.VPN_REALM}}
+          VPN_USER: ${{secrets.VPN_USER}}
+          VPN_PSWD: ${{secrets.VPN_PSWD}}
+          CERTS_URL: ${{secrets.CERTS_URL}}
+
+      - name: Deploying Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "HI FROM SERVER"
+            exit
