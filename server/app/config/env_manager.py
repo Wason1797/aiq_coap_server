@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     SECRET_KEY: str
     STATION_TYPE: StationType
+    VERSION: str
     ENV: str = "DEV"
     BORDER_ROUTER_ID: Optional[int] = None
     MAIN_SERVER_URI: Optional[str] = None
