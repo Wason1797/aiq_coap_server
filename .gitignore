@@ -154,3 +154,4 @@ cython_debug/
 *.env
 :backup_test_db
 :main_test_db
+.server_pid
