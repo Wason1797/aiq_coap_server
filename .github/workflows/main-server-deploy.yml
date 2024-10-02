@@ -21,7 +21,7 @@ jobs:
           echo "realm = $VPN_REALM" >> custom_config
           echo "username = $VPN_USER" >> custom_config
           echo "password = $VPN_PSWD" >> custom_config
-          sudo openfortivpn -c custom_config > program.log 2>&1&
+          sudo openfortivpn -c custom_config > openfortivpn_local.log 2>&1&
           sleep 15
         env:
           VPN_HOST: ${{secrets.VPN_HOST}}
@@ -32,11 +32,25 @@ jobs:
 
       - name: Deploying Server
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          POSTGRESQL_DB_URL: ${{secrets.POSTGRESQL_DB_URL}}
+          MYSQL_DB_URL: ${{secrets.MYSQL_DB_URL}}
+          ALLOWED_BOT_USERS: ${{secrets.ALLOWED_BOT_USERS}}
+          BOT_TOKEN: ${{secrets.BOT_TOKEN}}
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          STATION_TYPE: MAIN_SERVER
+          VERSION: ${{github.sha}}
+          ENV: PROD
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
+          envs: POSTGRESQL_DB_URL,MYSQL_DB_URL,ALLOWED_BOT_USERS,BOT_TOKEN,SECRET_KEY,STATION_TYPE,VERSION,ENV
           script: |
-            echo "HI FROM SERVER"
-            exit
+            cd aiq_coap_server/
+            git checkout main && git pull
+            cd server/
+            rm .env
+            sh create_env.sh
+            
