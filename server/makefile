@@ -3,3 +3,20 @@ run-backup-migrations:
 
 create-migration-revision:
 	alembic revision --autogenerate -m "default"
+
+.ONESHELL
+stop-server:
+	server_pid=$(cat .server_pid)
+	if [ "$server_pid" != "" ]; then
+		kill -9 $server_pid
+	else
+		echo "PID for server not found"
+	fi
+
+.ONESHELL
+start-server:
+	poetry run python -u -m app.main > server.log 2> server.err &
+	SERVER_PID=$!
+	rm .server_pid
+	echo "$SERVER_PID" >>.server_pid
+	echo "Server Succesfully deployed"
