@@ -51,7 +51,8 @@ jobs:
             cd aiq_coap_server/
             git checkout main && git pull
             cd server/
-            sh create_env.sh
+            make install-packages
+            make create-env
             make stop-server
             make start-server
 
