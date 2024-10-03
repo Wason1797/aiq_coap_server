@@ -1,8 +1,15 @@
-run-backup-migrations:
-	poetry run alembic -x target=backup  upgrade head
+# Only to deploy server
 
-create-migration-revision:
-	alembic revision --autogenerate -m "default"
+include migrations.makefile
+
+.PHONY: run-backup-migrations
+run-backup-migrations:
+	/home/admin/.local/bin/poetry run alembic -x target=backup  upgrade head
+
+.PHONY: run-main-migrations
+run-main-migrations:
+	/home/admin/.local/bin/poetry run alembic -x target=backup  upgrade head
+
 
 .ONESHELL:
 create-env:
