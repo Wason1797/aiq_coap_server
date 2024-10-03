@@ -17,9 +17,6 @@ create-env:
 	echo "VERSION=$$VERSION" >>.env
 	echo "ENV=$$ENV" >>.env
 
-.PHONY: install-packages
-install-packages:
-	poetry install
 
 .ONESHELL:
 .PHONY: stop-server
