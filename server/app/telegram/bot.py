@@ -7,6 +7,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.types import Message
+from aiogram.client.default import DefaultBotProperties
 
 Params = TypeVarTuple("Params")
 
@@ -20,7 +21,7 @@ class ManagementBot:
 
     @classmethod
     def init_bot(cls, token: str, allow_list: Iterable, admin_user: int):
-        cls._bot = Bot(token, parse_mode=ParseMode.HTML)
+        cls._bot = Bot(token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
         cls._allow_list = tuple(allow_list)
         cls._notification_user = admin_user
 
