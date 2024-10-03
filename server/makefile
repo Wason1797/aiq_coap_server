@@ -17,7 +17,7 @@ create-env:
 	echo "VERSION=$$VERSION" >>.env
 	echo "ENV=$$ENV" >>.env
 
-.ONESHELL:
+
 install-packages:
 	poetry install
 
@@ -25,7 +25,7 @@ install-packages:
 stop-server:
 	SERVER_PID=$(file < .server_pid)
 	if [ "$$SERVER_PID" != "" ]; then\
-		kill -9 $$SERVER_PID;\
+		kill -9 $$SERVER_PID || true;\
 	else\
 		echo "PID for server not found";\
 	fi\
