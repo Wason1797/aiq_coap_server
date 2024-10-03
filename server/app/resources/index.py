@@ -8,4 +8,4 @@ class IndexResource(resource.Resource):
         super().__init__()
 
     async def render_get(self, request) -> Message:
-        return Message(code=CONTENT, payload=f"AIQ COAP SERVER v{self.version}")
+        return Message(code=CONTENT, payload=f"AIQ COAP SERVER v{self.version}".encode("ascii"))
