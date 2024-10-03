@@ -15,7 +15,7 @@ from app.managers.station_manager import StationManager
 from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.mysql.database import MysqlConnector
 from app.repositories.postgres.database import PostgresqlConnector
-from app.resources import AiqDataResource, AiqManagementSummaryResource, AiqManagementTruncateResource
+from app.resources import AiqDataResource, AiqManagementSummaryResource, AiqManagementTruncateResource, IndexResource
 from app.security.payload_validator import PayloadValidator
 from app.telegram.bot import ManagementBot
 
@@ -58,7 +58,7 @@ async def main() -> None:
 
     server.add_resource(
         ["index"],
-        AiqDataResource(EnvManager.VERSION),
+        IndexResource(EnvManager.VERSION),
     )
 
     if not EnvManager.is_main_server():  # Enable management interface for border routers
