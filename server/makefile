@@ -22,8 +22,9 @@ install-packages:
 	poetry install
 
 .ONESHELL:
+.PHONY: stop-server
 stop-server:
-	SERVER_PID=$(file < .server_pid)
+	@SERVER_PID=$(file < .server_pid)
 	if [ "$$SERVER_PID" != "" ]; then\
 		kill -9 $$SERVER_PID || true;\
 	else\
@@ -31,8 +32,9 @@ stop-server:
 	fi\
 
 .ONESHELL:
+.PHONY: start-server
 start-server:
-	rm -f server.log
+	@rm -f server.log
 	rm -f server.err
 	poetry run python3 -u -m app.main > server.log 2> server.err &
 	SERVER_PID=$$!
