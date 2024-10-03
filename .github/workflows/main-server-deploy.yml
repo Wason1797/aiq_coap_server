@@ -52,7 +52,6 @@ jobs:
             git checkout main && git pull
             cd server/
             /home/admin/.local/bin/poetry install
-            /home/admin/.local/bin/poetry shell
             make create-env
             make stop-server
             make start-server

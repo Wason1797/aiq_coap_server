@@ -33,7 +33,7 @@ stop-server:
 start-server:
 	@rm -f server.log
 	rm -f server.err
-	python3.11 -u -m app.main > server.log 2> server.err &
+	/home/admin/.local/bin/poetry run python -u -m app.main > server.log 2> server.err &
 	SERVER_PID=$$!
 	rm -f .server_pid
 	echo "$$SERVER_PID" >>.server_pid
