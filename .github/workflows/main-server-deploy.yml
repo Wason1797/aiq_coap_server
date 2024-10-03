@@ -54,5 +54,7 @@ jobs:
             /home/admin/.local/bin/poetry install
             make create-env
             make stop-server
+            make run-backup-migrations
+            make run-main-migrations
             make start-server
 
