@@ -21,7 +21,9 @@ create-env:
 .ONESHELL:
 .PHONY: stop-server
 stop-server:
-	@SERVER_PID=$(file < .server_pid)
+	@rm -f server.err
+	rm -f server.log
+	SERVER_PID=$(file < .server_pid)
 	if [ "$$SERVER_PID" != "" ]; then\
 		kill -9 $$SERVER_PID || true;\
 	else\
