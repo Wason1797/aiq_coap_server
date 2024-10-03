@@ -17,7 +17,7 @@ create-env:
 	echo "VERSION=$$VERSION" >>.env
 	echo "ENV=$$ENV" >>.env
 
-
+.PHONY:
 install-packages:
 	poetry install
 
