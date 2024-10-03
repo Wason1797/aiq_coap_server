@@ -51,8 +51,8 @@ jobs:
             cd aiq_coap_server/
             git checkout main && git pull
             cd server/
-            echo $PWD
             poetry install
+            poetry shell
             make create-env
             make stop-server
             make start-server
