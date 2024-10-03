@@ -6,7 +6,7 @@ create-migration-revision:
 
 .ONESHELL:
 create-env:
-	-rm .env
+	@rm -f .env
 	touch .env
 	echo "POSTGRESQL_DB_URL=$$POSTGRESQL_DB_URL" >>.env
 	echo "MYSQL_DB_URL=$$MYSQL_DB_URL" >>.env
