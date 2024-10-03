@@ -8,7 +8,7 @@ run-backup-migrations:
 
 .PHONY: run-main-migrations
 run-main-migrations:
-	/home/admin/.local/bin/poetry run alembic -x target=backup  upgrade head
+	/home/admin/.local/bin/poetry run alembic -x target=local  upgrade head
 
 
 .ONESHELL:
