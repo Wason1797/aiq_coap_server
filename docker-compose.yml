@@ -10,7 +10,7 @@ services:
       - postgresdb
     environment:
       PYTHONUNBUFFERED: 1
-      POSTGRESQL_DB_URL: "${POSTGRESQL_DB_USER}:${POSTGRESQL_DB_PASS}@postgresdb"
+      POSTGRESQL_DB_URL: "${POSTGRESQL_DB_USER}:${POSTGRESQL_DB_PASS}@host.docker.internal:5438"
       MYSQL_DB_URL: ${MYSQL_DB_URL}
       ALLOWED_BOT_USERS: ${ALLOWED_BOT_USERS}
       BOT_TOKEN: ${BOT_TOKEN}
@@ -19,6 +19,7 @@ services:
       BORDER_ROUTER_ID: ${BORDER_ROUTER_ID}
       MAIN_SERVER_URI: ${MAIN_SERVER_URI}
       ENV: PROD
+    network_mode: "host"
 
   postgresdb:
     image: postgres:14.2
