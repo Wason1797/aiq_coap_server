@@ -29,6 +29,10 @@ class PayloadValidator:
             assert len(payload_chunks) == 2
             payload_chunks.append("")
 
+        if not is_main_server:
+            assert len(payload_chunks) == 2
+            payload_chunks.append("")
+
         message, signature_hex, border_router_id = payload_chunks
 
         message_hex = hmac.new(cls.secret_key.encode("ascii"), message.encode("ascii"), "sha1").hexdigest()
