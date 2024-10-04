@@ -1,5 +1,6 @@
 import aiocoap.resource as resource  # type: ignore
 from aiocoap import CONTENT, Message
+from app.log import log
 
 
 class IndexResource(resource.Resource):
@@ -8,4 +9,6 @@ class IndexResource(resource.Resource):
         super().__init__()
 
     async def render_get(self, request) -> Message:
-        return Message(code=CONTENT, payload=f"AIQ COAP SERVER v{self.version}".encode("ascii"))
+        response = f"AIQ COAP SERVER v-{self.version}"
+        log.info(f"index: {response}")
+        return Message(code=CONTENT, payload=response.encode("ascii"))
