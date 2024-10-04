@@ -51,7 +51,7 @@ jobs:
             cd aiq_coap_server/
             git checkout main && git pull
             cd server/
-            /home/admin/.local/bin/poetry install
+            /home/admin/.local/bin/poetry install --only main
             make create-env
             make stop-server
             make run-backup-migrations
