@@ -40,7 +40,7 @@ async def main() -> None:
 
     log.info("Initializing COAP resources")
     binds = ("localhost", None) if EnvManager.is_dev() else None
-    main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds, transports=["simple6"])
+    main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
     main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, main_coap_context)
 
     server = resource.Site()
@@ -99,7 +99,7 @@ async def main() -> None:
     asyncio.get_running_loop().add_signal_handler(signal.SIGINT, lambda: sys.exit(0))
     try:
         main_coap_context.serversite = server
-        if EnvManager.is_main_server():  # Only one instance of the bot can run at the time
+        if EnvManager.is_main_server() and False:  # Only one instance of the bot can run at the time
             await ManagementBot.start_polling()
 
         await asyncio.get_running_loop().create_future()
