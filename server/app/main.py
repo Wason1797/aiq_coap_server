@@ -40,7 +40,7 @@ async def main() -> None:
 
     log.info("Initializing COAP resources")
     binds = ("localhost", None) if EnvManager.is_dev() else None
-    main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
+    main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds, transports=["simple6"])
     main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, main_coap_context)
 
     server = resource.Site()
