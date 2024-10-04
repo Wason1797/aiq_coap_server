@@ -17,12 +17,16 @@ class PayloadValidator:
         cls.secret_key = secret_key
 
     @classmethod
-    def validate(cls, payload: str, model: Type[BaseModel], is_main_server: bool = False) -> ValidatorResult:
+    def validate(cls, payload: str, model: Type[BaseModel], is_main_server: bool, allow_messages_from_br: bool) -> ValidatorResult:
         if not cls.secret_key:
             raise RuntimeError("Cannot validate payload before initialization")
 
         payload_chunks = payload.split("|")
-        if not is_main_server:
+        if is_main_server and allow_messages_from_br:
+            assert len(payload_chunks) == 3
+
+        if is_main_server and not allow_messages_from_br:
+            assert len(payload_chunks) == 2
             payload_chunks.append("")
 
         message, signature_hex, border_router_id = payload_chunks
@@ -30,6 +34,6 @@ class PayloadValidator:
         message_hex = hmac.new(cls.secret_key.encode("ascii"), message.encode("ascii"), "sha1").hexdigest()
 
         if hmac.compare_digest(message_hex, signature_hex):
-            return ValidatorResult(model.model_validate_json(message), int(border_router_id))
+            return ValidatorResult(model.model_validate_json(message), int(border_router_id) if border_router_id else None)
 
         raise ValueError("Payload has an invalid signature")

@@ -42,6 +42,8 @@ async def test_register_border_router_update(
     async with main_db_session() as session:
         main_br = (await session.scalars(select(BorderRouter).limit(1))).first()
 
+    assert main_br
+
     result = await BorderRouterManager.register_border_router(
         main_db_session, backup_db_session, updated_ip, updated_location, main_br.id
     )

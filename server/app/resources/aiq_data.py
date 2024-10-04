@@ -23,6 +23,8 @@ class AiqDataResource(resource.Resource):
         coap_client: Optional[CoapClient],
         payload_validator: Type[PayloadValidator],
         border_router_id: Optional[int] = None,
+        allow_messages_from_br: bool = False,
+        allow_backups: bool = False,
     ):
         super().__init__()
         self.is_main_server = is_main_server
@@ -31,13 +33,17 @@ class AiqDataResource(resource.Resource):
         self.backup_session = backup_session
         self.coap_client = coap_client
         self.payload_validator = payload_validator
+        self.allow_messages_from_br = allow_messages_from_br
+        self.allow_backups = allow_backups
 
     async def render_put(self, request) -> Message:
         try:
             payload: str = request.payload.decode("ascii")
             log.info(f"[COAP] got request {payload}")
 
-            validated_payload = self.payload_validator.validate(payload, AiqDataFromStation, self.is_main_server)
+            validated_payload = self.payload_validator.validate(
+                payload, AiqDataFromStation, self.is_main_server, self.allow_messages_from_br
+            )
 
             sensor_data = cast(AiqDataFromStation, validated_payload.data)
 
@@ -50,12 +56,13 @@ class AiqDataResource(resource.Resource):
                 )
             except Exception as ex:
                 ex.add_note("Could not store sensor data in main DB")
-                await AiqDataManager.save_sensor_data(
-                    self.backup_session, sensor_data, validated_payload.border_router_id or self.border_router_id
-                )
+                if self.allow_backups:
+                    await AiqDataManager.save_sensor_data(
+                        self.backup_session, sensor_data, validated_payload.border_router_id or self.border_router_id
+                    )
                 raise ex
 
-            if self.is_main_server:
+            if self.is_main_server and self.allow_backups:
                 await AiqDataManager.save_sensor_data(self.backup_session, sensor_data, validated_payload.border_router_id)
 
         except Exception:

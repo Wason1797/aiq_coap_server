@@ -53,6 +53,8 @@ async def main() -> None:
             main_coap_client,
             PayloadValidator,
             EnvManager.BORDER_ROUTER_ID,
+            EnvManager.allow_messages_from_br(),
+            EnvManager.allow_backups(),
         ),
     )
 

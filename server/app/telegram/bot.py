@@ -10,6 +10,7 @@ from aiogram.types import Message
 from aiogram.client.default import DefaultBotProperties
 
 Params = TypeVarTuple("Params")
+ManagementBotCallback = Callable[[*Params], Awaitable[str]]
 
 
 class ManagementBot:
@@ -17,7 +18,7 @@ class ManagementBot:
     _bot: Optional[Bot] = None
     _allow_list: Optional[tuple] = None
     _notification_user: Optional[int] = None
-    _commands: dict[str, Callable[[*Params], Awaitable[str]]] = dict()
+    _commands: dict[str, ManagementBotCallback] = dict()
 
     @classmethod
     def init_bot(cls, token: str, allow_list: Iterable, admin_user: int):
@@ -48,11 +49,11 @@ class ManagementBot:
         return key in cls._commands
 
     @classmethod
-    def get_command(cls, key: str) -> Callable[[*Params], Awaitable[str]]:
+    def get_command(cls, key: str) -> ManagementBotCallback:
         return cls._commands[key]
 
     @classmethod
-    def register_commad(cls, key: str, callback: Callable[[*Params], Awaitable[str]]) -> None:
+    def register_commad(cls, key: str, callback: ManagementBotCallback) -> None:
         cls._commands[key] = callback
 
     @classmethod

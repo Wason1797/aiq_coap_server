@@ -10,6 +10,15 @@ class StationType(StrEnum):
     MAIN_SERVER = "MAIN_SERVER"
 
 
+class ReplicationType(StrEnum):
+    # Messages to the main server come from a replica server in the border router
+    # device -> br -> br_server -> main_server
+    FROM_BORDER_ROUTER = "FROM_BORDER_ROUTER"
+    # Messages to the main server come from the end device directly
+    # device -> br -> main_server
+    NONE = "NONE"
+
+
 class Settings(BaseSettings):
     POSTGRESQL_DB_URL: str
     MYSQL_DB_URL: str
@@ -20,6 +29,8 @@ class Settings(BaseSettings):
     VERSION: str
     ENV: str = "DEV"
     BORDER_ROUTER_ID: Optional[int] = None
+    REPLICATION: ReplicationType = ReplicationType.NONE
+    WRITE_TO_BACKUP: bool = True
     MAIN_SERVER_URI: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=".env")
@@ -44,6 +55,12 @@ class Settings(BaseSettings):
 
     def is_dev(self) -> bool:
         return self.ENV.upper() == "DEV"
+
+    def allow_messages_from_br(self) -> bool:
+        return self.REPLICATION == ReplicationType.FROM_BORDER_ROUTER
+
+    def allow_backups(self) -> bool:
+        return self.WRITE_TO_BACKUP and bool(self.get_backup_db_url())
 
 
 @lru_cache
