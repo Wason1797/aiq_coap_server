@@ -16,8 +16,8 @@ async def main():
 
     await asyncio.sleep(2)
 
-    payload = b"The quick brown fox jumps over the lazy dog.\n"
-    request = Message(code=PUT, payload=payload, uri="coap://localhost/aiq-data")
+    payload = b"1"
+    request = Message(code=GET, payload=payload, uri="coap://localhost/index")
 
     response = await context.request(request).response
 
