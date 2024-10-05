@@ -21,7 +21,7 @@ def mock_station_id() -> int:
 
 
 @pytest.fixture
-def mock_aiq_request_scd41_main_server_from_br(mock_station_id: int) -> MockRequest:
+def mock_aiq_request_scd41_from_br(mock_station_id: int) -> MockRequest:
     """Don't forget to update the signature if you change the data"""
 
     return MockRequest(
@@ -32,7 +32,7 @@ def mock_aiq_request_scd41_main_server_from_br(mock_station_id: int) -> MockRequ
 
 
 @pytest.fixture
-def mock_aiq_request_scd41_main_server_from_end_device(mock_station_id: int) -> MockRequest:
+def mock_aiq_request_scd41_from_end_device(mock_station_id: int) -> MockRequest:
     """Don't forget to update the signature if you change the data"""
 
     return MockRequest(
