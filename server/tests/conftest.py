@@ -46,4 +46,5 @@ pytest_plugins = [
     "tests.fixtures.aiq_data",
     "tests.fixtures.payload_validator",
     "tests.fixtures.management_bot",
+    "tests.fixtures.coap_client",
 ]
