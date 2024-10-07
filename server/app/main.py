@@ -99,7 +99,7 @@ async def main() -> None:
     asyncio.get_running_loop().add_signal_handler(signal.SIGINT, lambda: sys.exit(0))
     try:
         main_coap_context.serversite = server
-        if EnvManager.is_main_server() and False:  # Only one instance of the bot can run at the time
+        if EnvManager.is_main_server():  # Only one instance of the bot can run at the time
             await ManagementBot.start_polling()
 
         await asyncio.get_running_loop().create_future()
