@@ -1,19 +1,19 @@
 {
     "annotations": {
-        "list": [
-            {
-                "builtIn": 1,
-                "datasource": {
-                    "type": "grafana",
-                    "uid": "-- Grafana --"
-                },
-                "enable": true,
-                "hide": true,
-                "iconColor": "rgba(0, 211, 255, 1)",
-                "name": "Annotations & Alerts",
-                "type": "dashboard"
-            }
-        ]
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
     },
     "editable": true,
     "fiscalYearStartMonth": 0,
@@ -22,1268 +22,2162 @@
     "links": [],
     "liveNow": false,
     "panels": [
-        {
-            "datasource": {
-                "type": "grafana-postgresql-datasource",
-                "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-            },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "axisBorderShow": false,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "text",
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        },
-                        "insertNulls": false,
-                        "lineInterpolation": "smooth",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        },
-                        "showPoints": "auto",
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
-                    },
-                    "mappings": [],
-                    "max": 40,
-                    "min": -5,
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "celsius"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 12,
-                "w": 12,
-                "x": 0,
-                "y": 0
-            },
-            "id": 6,
-            "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "right",
-                    "showLegend": false
-                },
-                "tooltip": {
-                    "mode": "single",
-                    "sort": "none"
-                }
-            },
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "grafana-postgresql-datasource",
-                        "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                    },
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "SELECT \"timestamp\", temperature FROM sensor_data WHERE sensor_id = $sensors AND location_id = '$locations' ORDER BY \"timestamp\" ",
-                    "refId": "A",
-                    "sql": {
-                        "columns": [
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "\"timestamp\"",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            },
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "temperature",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            }
-                        ],
-                        "groupBy": [],
-                        "orderBy": {
-                            "property": {
-                                "name": [
-                                    "\"timestamp\""
-                                ],
-                                "type": "string"
-                            },
-                            "type": "property"
-                        },
-                        "whereJsonTree": {
-                            "children1": [
-                                {
-                                    "id": "9998aa99-4567-489a-bcde-f18d32790d4b",
-                                    "properties": {
-                                        "field": "sensor_id",
-                                        "fieldSrc": "field",
-                                        "operator": "equal",
-                                        "value": [
-                                            null
-                                        ],
-                                        "valueSrc": [
-                                            "value"
-                                        ],
-                                        "valueType": [
-                                            "number"
-                                        ]
-                                    },
-                                    "type": "rule"
-                                }
-                            ],
-                            "id": "ab9a999b-0123-4456-b89a-b18d31e02971",
-                            "type": "group"
-                        }
-                    },
-                    "table": "sensor_data"
-                }
-            ],
-            "title": "Temperature in C",
-            "transformations": [
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "number",
-                                "targetField": "timestamp"
-                            },
-                            {
-                                "destinationType": "number",
-                                "targetField": "temperature"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Timestamp",
-                        "binary": {
-                            "left": "timestamp",
-                            "operator": "*",
-                            "right": "1000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Temperature",
-                        "binary": {
-                            "left": "temperature",
-                            "operator": "/",
-                            "right": "1000000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "time",
-                                "targetField": "Timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "filterFieldsByName",
-                    "options": {
-                        "include": {
-                            "names": [
-                                "Timestamp",
-                                "Temperature"
-                            ]
-                        }
-                    }
-                }
-            ],
-            "type": "timeseries"
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
         },
-        {
-            "datasource": {
-                "type": "grafana-postgresql-datasource",
-                "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
             },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "axisBorderShow": false,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "text",
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        },
-                        "insertNulls": false,
-                        "lineInterpolation": "smooth",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        },
-                        "showPoints": "auto",
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
-                    },
-                    "mappings": [],
-                    "min": 0,
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "ppm"
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "max": 40,
+            "min": -5,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
                 },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 12,
-                "w": 12,
-                "x": 12,
-                "y": 0
-            },
-            "id": 2,
-            "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "right",
-                    "showLegend": false
-                },
-                "tooltip": {
-                    "mode": "single",
-                    "sort": "none"
+                {
+                  "color": "red",
+                  "value": 80
                 }
+              ]
             },
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "grafana-postgresql-datasource",
-                        "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                    },
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "SELECT \"timestamp\", co2 FROM sensor_data WHERE sensor_id = $sensors AND location_id = '$locations' ORDER BY \"timestamp\" ",
-                    "refId": "A",
-                    "sql": {
-                        "columns": [
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "\"timestamp\"",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            },
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "co2",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            }
-                        ],
-                        "groupBy": [
-                            {
-                                "property": {
-                                    "type": "string"
-                                },
-                                "type": "groupBy"
-                            }
-                        ],
-                        "orderBy": {
-                            "property": {
-                                "name": [
-                                    "\"timestamp\""
-                                ],
-                                "type": "string"
-                            },
-                            "type": "property"
-                        }
-                    },
-                    "table": "sensor_data"
-                }
-            ],
-            "title": "CO2",
-            "transformations": [
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "number",
-                                "targetField": "timestamp"
-                            },
-                            {
-                                "destinationType": "number",
-                                "targetField": "co2"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Timestamp",
-                        "binary": {
-                            "left": "timestamp",
-                            "operator": "*",
-                            "right": "1000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "CO2",
-                        "binary": {
-                            "left": "co2",
-                            "operator": "/",
-                            "right": "1000000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "time",
-                                "targetField": "Timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "filterFieldsByName",
-                    "options": {
-                        "include": {
-                            "names": [
-                                "Timestamp",
-                                "CO2"
-                            ]
-                        }
-                    }
-                }
-            ],
-            "type": "timeseries"
+            "unit": "celsius"
+          },
+          "overrides": []
         },
-        {
-            "datasource": {
-                "type": "grafana-postgresql-datasource",
-                "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-            },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "axisBorderShow": false,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "text",
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        },
-                        "insertNulls": false,
-                        "lineInterpolation": "smooth",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        },
-                        "showPoints": "auto",
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
-                    },
-                    "mappings": [],
-                    "min": 0,
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "ppm"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 12,
-                "w": 12,
-                "x": 0,
-                "y": 12
-            },
-            "id": 3,
-            "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "right",
-                    "showLegend": false
-                },
-                "tooltip": {
-                    "mode": "single",
-                    "sort": "none"
-                }
-            },
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "grafana-postgresql-datasource",
-                        "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                    },
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "SELECT \"timestamp\", eco2 FROM sensor_data WHERE sensor_id = $sensors AND location_id = '$locations' ORDER BY \"timestamp\" ",
-                    "refId": "A",
-                    "sql": {
-                        "columns": [
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "\"timestamp\"",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            },
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "eco2",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            }
-                        ],
-                        "groupBy": [
-                            {
-                                "property": {
-                                    "type": "string"
-                                },
-                                "type": "groupBy"
-                            }
-                        ],
-                        "orderBy": {
-                            "property": {
-                                "name": [
-                                    "\"timestamp\""
-                                ],
-                                "type": "string"
-                            },
-                            "type": "property"
-                        }
-                    },
-                    "table": "sensor_data"
-                }
-            ],
-            "title": "ECO2",
-            "transformations": [
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "number",
-                                "targetField": "timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Timestamp",
-                        "binary": {
-                            "left": "timestamp",
-                            "operator": "*",
-                            "right": "1000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Temperature",
-                        "binary": {
-                            "left": "temperature",
-                            "operator": "/",
-                            "right": "1000000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "time",
-                                "targetField": "Timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "filterFieldsByName",
-                    "options": {
-                        "include": {
-                            "names": [
-                                "Timestamp",
-                                "eco2"
-                            ]
-                        }
-                    }
-                }
-            ],
-            "type": "timeseries"
+        "gridPos": {
+          "h": 7,
+          "w": 5,
+          "x": 0,
+          "y": 0
         },
-        {
-            "datasource": {
-                "type": "grafana-postgresql-datasource",
-                "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-            },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "axisBorderShow": false,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "text",
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        },
-                        "insertNulls": false,
-                        "lineInterpolation": "smooth",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        },
-                        "showPoints": "auto",
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
-                    },
-                    "mappings": [],
-                    "min": 0,
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "humidity"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 7,
-                "w": 6,
-                "x": 12,
-                "y": 12
-            },
-            "id": 5,
-            "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "right",
-                    "showLegend": false
-                },
-                "tooltip": {
-                    "mode": "single",
-                    "sort": "none"
-                }
-            },
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "grafana-postgresql-datasource",
-                        "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                    },
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "SELECT \"timestamp\", humidity FROM sensor_data WHERE sensor_id = $sensors AND location_id = '$locations' ORDER BY \"timestamp\" ",
-                    "refId": "A",
-                    "sql": {
-                        "columns": [
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "\"timestamp\"",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            },
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "humidity",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            }
-                        ],
-                        "groupBy": [
-                            {
-                                "property": {
-                                    "type": "string"
-                                },
-                                "type": "groupBy"
-                            }
-                        ],
-                        "orderBy": {
-                            "property": {
-                                "name": [
-                                    "\"timestamp\""
-                                ],
-                                "type": "string"
-                            },
-                            "type": "property"
-                        }
-                    },
-                    "table": "sensor_data"
-                }
-            ],
-            "title": "Humidity",
-            "transformations": [
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "number",
-                                "targetField": "timestamp"
-                            },
-                            {
-                                "destinationType": "number",
-                                "targetField": "humidity"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Timestamp",
-                        "binary": {
-                            "left": "timestamp",
-                            "operator": "*",
-                            "right": "1000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Humidity",
-                        "binary": {
-                            "left": "humidity",
-                            "operator": "/",
-                            "right": "1000000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "time",
-                                "targetField": "Timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "filterFieldsByName",
-                    "options": {
-                        "include": {
-                            "names": [
-                                "Timestamp",
-                                "Humidity"
-                            ]
-                        }
-                    }
-                }
-            ],
-            "type": "timeseries"
+        "id": 6,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
         },
-        {
+        "targets": [
+          {
             "datasource": {
-                "type": "grafana-postgresql-datasource",
-                "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
             },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "axisBorderShow": false,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "text",
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        },
-                        "insertNulls": false,
-                        "lineInterpolation": "linear",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        },
-                        "showPoints": "auto",
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", temperature FROM station_data inner join scd41_data on station_data.scd41_data_id=scd41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
                     }
+                  ],
+                  "type": "function"
                 },
-                "overrides": []
+                {
+                  "parameters": [
+                    {
+                      "name": "temperature",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "whereJsonTree": {
+                "children1": [
+                  {
+                    "id": "9998aa99-4567-489a-bcde-f18d32790d4b",
+                    "properties": {
+                      "field": "sensor_id",
+                      "fieldSrc": "field",
+                      "operator": "equal",
+                      "value": [
+                        null
+                      ],
+                      "valueSrc": [
+                        "value"
+                      ],
+                      "valueType": [
+                        "number"
+                      ]
+                    },
+                    "type": "rule"
+                  }
+                ],
+                "id": "ab9a999b-0123-4456-b89a-b18d31e02971",
+                "type": "group"
+              }
             },
-            "gridPos": {
-                "h": 7,
-                "w": 6,
-                "x": 18,
-                "y": 12
-            },
-            "id": 4,
+            "table": "sensor_data"
+          }
+        ],
+        "title": "SCD41 Temperature in C",
+        "transformations": [
+          {
+            "id": "convertFieldType",
             "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "right",
-                    "showLegend": false
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
                 },
-                "tooltip": {
-                    "mode": "single",
-                    "sort": "none"
+                {
+                  "destinationType": "number",
+                  "targetField": "temperature"
                 }
-            },
-            "pluginVersion": "10.2.3",
-            "targets": [
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Temperature",
+              "binary": {
+                "left": "temperature",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
                 {
-                    "datasource": {
-                        "type": "grafana-postgresql-datasource",
-                        "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                    },
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "SELECT \"timestamp\", tvoc FROM sensor_data WHERE sensor_id = $sensors AND location_id = '$locations' ORDER BY \"timestamp\" ",
-                    "refId": "A",
-                    "sql": {
-                        "columns": [
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "\"timestamp\"",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            },
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "tvoc",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            }
-                        ],
-                        "groupBy": [
-                            {
-                                "property": {
-                                    "type": "string"
-                                },
-                                "type": "groupBy"
-                            }
-                        ],
-                        "orderBy": {
-                            "property": {
-                                "name": [
-                                    "\"timestamp\""
-                                ],
-                                "type": "string"
-                            },
-                            "type": "property"
-                        }
-                    },
-                    "table": "sensor_data"
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
                 }
-            ],
-            "title": "Volatile Air Compounds",
-            "transformations": [
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "number",
-                                "targetField": "timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Timestamp",
-                        "binary": {
-                            "left": "timestamp",
-                            "operator": "*",
-                            "right": "1000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "time",
-                                "targetField": "Timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "filterFieldsByName",
-                    "options": {
-                        "include": {
-                            "names": [
-                                "Timestamp",
-                                "tvoc"
-                            ]
-                        }
-                    }
-                }
-            ],
-            "type": "timeseries"
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "Temperature"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
         },
-        {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "max": 40,
+            "min": -5,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "celsius"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 5,
+          "x": 5,
+          "y": 0
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
             "datasource": {
-                "type": "grafana-postgresql-datasource",
-                "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
             },
-            "fieldConfig": {
-                "defaults": {
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "percentage",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "orange",
-                                "value": 70
-                            },
-                            {
-                                "color": "red",
-                                "value": 85
-                            }
-                        ]
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", temperature FROM station_data inner join svm41_data on station_data.svm41_data_id=svm41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
                     }
+                  ],
+                  "type": "function"
                 },
-                "overrides": []
+                {
+                  "parameters": [
+                    {
+                      "name": "temperature",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "whereJsonTree": {
+                "children1": [
+                  {
+                    "id": "9998aa99-4567-489a-bcde-f18d32790d4b",
+                    "properties": {
+                      "field": "sensor_id",
+                      "fieldSrc": "field",
+                      "operator": "equal",
+                      "value": [
+                        null
+                      ],
+                      "valueSrc": [
+                        "value"
+                      ],
+                      "valueType": [
+                        "number"
+                      ]
+                    },
+                    "type": "rule"
+                  }
+                ],
+                "id": "ab9a999b-0123-4456-b89a-b18d31e02971",
+                "type": "group"
+              }
             },
-            "gridPos": {
-                "h": 5,
-                "w": 12,
-                "x": 12,
-                "y": 19
-            },
-            "id": 7,
+            "table": "sensor_data"
+          }
+        ],
+        "title": "SVM41 Temperature in C",
+        "transformations": [
+          {
+            "id": "convertFieldType",
             "options": {
-                "minVizHeight": 200,
-                "minVizWidth": 200,
-                "orientation": "auto",
-                "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
-                    "fields": "",
-                    "values": false
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
                 },
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true,
-                "sizing": "auto"
+                {
+                  "destinationType": "number",
+                  "targetField": "temperature"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Temperature",
+              "binary": {
+                "left": "temperature",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "Temperature"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
             },
-            "pluginVersion": "10.2.3",
-            "targets": [
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "axisSoftMax": 1250,
+              "axisSoftMin": 200,
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
                 {
-                    "datasource": {
-                        "type": "grafana-postgresql-datasource",
-                        "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                    },
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "SELECT \"timestamp\", aqi FROM sensor_data WHERE sensor_id = $sensors AND location_id = '$locations' ORDER BY \"timestamp\" ",
-                    "refId": "A",
-                    "sql": {
-                        "columns": [
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "\"timestamp\"",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            },
-                            {
-                                "parameters": [
-                                    {
-                                        "name": "aqi",
-                                        "type": "functionParameter"
-                                    }
-                                ],
-                                "type": "function"
-                            }
-                        ],
-                        "groupBy": [
-                            {
-                                "property": {
-                                    "type": "string"
-                                },
-                                "type": "groupBy"
-                            }
-                        ],
-                        "orderBy": {
-                            "property": {
-                                "name": [
-                                    "\"timestamp\""
-                                ],
-                                "type": "string"
-                            },
-                            "type": "property"
-                        }
-                    },
-                    "table": "sensor_data"
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
                 }
-            ],
-            "title": "Air Quality Index",
-            "transformations": [
+              ]
+            },
+            "unit": "ppm"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 14,
+          "x": 10,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", co2 FROM station_data inner join scd41_data on station_data.scd41_data_id=scd41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
                 {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "number",
-                                "targetField": "timestamp"
-                            }
-                        ],
-                        "fields": {}
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
                     }
+                  ],
+                  "type": "function"
                 },
                 {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Timestamp",
-                        "binary": {
-                            "left": "timestamp",
-                            "operator": "*",
-                            "right": "1000"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
+                  "parameters": [
+                    {
+                      "name": "co2",
+                      "type": "functionParameter"
                     }
-                },
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "time",
-                                "targetField": "Timestamp"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                },
-                {
-                    "id": "filterFieldsByName",
-                    "options": {
-                        "include": {
-                            "names": [
-                                "Timestamp",
-                                "aqi"
-                            ]
-                        }
-                    }
+                  ],
+                  "type": "function"
                 }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "SCD41 CO2",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                },
+                {
+                  "destinationType": "number",
+                  "targetField": "co2"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "CO2",
+              "binary": {
+                "left": "co2",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "CO2"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "humidity"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 5,
+          "x": 0,
+          "y": 7
+        },
+        "id": 5,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", humidity FROM station_data inner join scd41_data on station_data.scd41_data_id=scd41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                },
+                {
+                  "parameters": [
+                    {
+                      "name": "humidity",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "SCD41 Humidity",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                },
+                {
+                  "destinationType": "number",
+                  "targetField": "humidity"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Humidity",
+              "binary": {
+                "left": "humidity",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "Humidity"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "humidity"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 5,
+          "x": 5,
+          "y": 7
+        },
+        "id": 9,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", humidity FROM station_data inner join svm41_data on station_data.svm41_data_id=svm41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                },
+                {
+                  "parameters": [
+                    {
+                      "name": "humidity",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "SVM41 Humidity",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                },
+                {
+                  "destinationType": "number",
+                  "targetField": "humidity"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Humidity",
+              "binary": {
+                "left": "humidity",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "Humidity"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "max": 40,
+            "min": -5,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "celsius"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 10,
+          "y": 7
+        },
+        "id": 10,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", nox_index FROM station_data inner join svm41_data on station_data.svm41_data_id=svm41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                },
+                {
+                  "parameters": [
+                    {
+                      "name": "temperature",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "whereJsonTree": {
+                "children1": [
+                  {
+                    "id": "9998aa99-4567-489a-bcde-f18d32790d4b",
+                    "properties": {
+                      "field": "sensor_id",
+                      "fieldSrc": "field",
+                      "operator": "equal",
+                      "value": [
+                        null
+                      ],
+                      "valueSrc": [
+                        "value"
+                      ],
+                      "valueType": [
+                        "number"
+                      ]
+                    },
+                    "type": "rule"
+                  }
+                ],
+                "id": "ab9a999b-0123-4456-b89a-b18d31e02971",
+                "type": "group"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "SVM41 NOX Index",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                },
+                {
+                  "destinationType": "number",
+                  "targetField": "temperature"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Temperature",
+              "binary": {
+                "left": "temperature",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "Temperature"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "max": 40,
+            "min": -5,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "celsius"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 17,
+          "y": 7
+        },
+        "id": 11,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", voc_index FROM station_data inner join svm41_data on station_data.svm41_data_id=svm41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                },
+                {
+                  "parameters": [
+                    {
+                      "name": "temperature",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              },
+              "whereJsonTree": {
+                "children1": [
+                  {
+                    "id": "9998aa99-4567-489a-bcde-f18d32790d4b",
+                    "properties": {
+                      "field": "sensor_id",
+                      "fieldSrc": "field",
+                      "operator": "equal",
+                      "value": [
+                        null
+                      ],
+                      "valueSrc": [
+                        "value"
+                      ],
+                      "valueType": [
+                        "number"
+                      ]
+                    },
+                    "type": "rule"
+                  }
+                ],
+                "id": "ab9a999b-0123-4456-b89a-b18d31e02971",
+                "type": "group"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "SVM41 VOC Index",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                },
+                {
+                  "destinationType": "number",
+                  "targetField": "temperature"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Temperature",
+              "binary": {
+                "left": "temperature",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "Temperature"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ppm"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 10,
+          "x": 0,
+          "y": 15
+        },
+        "id": 3,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", eco2 FROM station_data inner join ens160_data on station_data.ens160_data_id=ens160_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                },
+                {
+                  "parameters": [
+                    {
+                      "name": "eco2",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "EN160 ECO2",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Temperature",
+              "binary": {
+                "left": "temperature",
+                "operator": "/",
+                "right": "1000000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "eco2"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 7,
+          "x": 10,
+          "y": 15
+        },
+        "id": 4,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "right",
+            "showLegend": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", tvoc FROM station_data inner join ens160_data on station_data.ens160_data_id=ens160_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                },
+                {
+                  "parameters": [
+                    {
+                      "name": "tvoc",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "ENS160 VOC",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "tvoc"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "orange",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 7,
+          "x": 17,
+          "y": 15
+        },
+        "id": 7,
+        "options": {
+          "minVizHeight": 200,
+          "minVizWidth": 200,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
             ],
-            "type": "gauge"
-        }
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \"timestamp\", aqi FROM station_data inner join ens160_data on station_data.ens160_data_id=ens160_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [
+                    {
+                      "name": "\"timestamp\"",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                },
+                {
+                  "parameters": [
+                    {
+                      "name": "aqi",
+                      "type": "functionParameter"
+                    }
+                  ],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "orderBy": {
+                "property": {
+                  "name": [
+                    "\"timestamp\""
+                  ],
+                  "type": "string"
+                },
+                "type": "property"
+              }
+            },
+            "table": "sensor_data"
+          }
+        ],
+        "title": "ENS 160 Air Quality Index",
+        "transformations": [
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Timestamp",
+              "binary": {
+                "left": "timestamp",
+                "operator": "*",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "convertFieldType",
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "time",
+                  "targetField": "Timestamp"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Timestamp",
+                  "aqi"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "gauge"
+      }
     ],
-    "refresh": "",
+    "refresh": false,
     "schemaVersion": 39,
     "tags": [],
     "templating": {
-        "list": [
-            {
-                "current": {
-                    "selected": false,
-                    "text": "1",
-                    "value": "1"
-                },
-                "datasource": {
-                    "type": "grafana-postgresql-datasource",
-                    "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                },
-                "definition": "SELECT DISTINCT sensor_id from sensor_data",
-                "hide": 0,
-                "includeAll": false,
-                "label": "Sensor id",
-                "multi": false,
-                "name": "sensors",
-                "options": [],
-                "query": "SELECT DISTINCT sensor_id from sensor_data",
-                "refresh": 2,
-                "regex": "",
-                "skipUrlSync": false,
-                "sort": 3,
-                "type": "query"
-            },
-            {
-                "current": {
-                    "selected": false,
-                    "text": "default",
-                    "value": "default"
-                },
-                "datasource": {
-                    "type": "grafana-postgresql-datasource",
-                    "uid": "ef37b420-ab4b-46d7-8f66-2b1e6530e2f6"
-                },
-                "definition": "SELECT DISTINCT location_id from sensor_data",
-                "hide": 0,
-                "includeAll": false,
-                "label": "Locations",
-                "multi": false,
-                "name": "locations",
-                "options": [],
-                "query": "SELECT DISTINCT location_id from sensor_data",
-                "refresh": 2,
-                "regex": "",
-                "skipUrlSync": false,
-                "sort": 1,
-                "type": "query"
-            }
-        ]
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+          },
+          "definition": "select id from border_routers",
+          "description": "The id from the border router that forwarded the data",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Border Router Id",
+          "multi": false,
+          "name": "border_router_id",
+          "options": [],
+          "query": "select id from border_routers",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 3,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "d9490090-8eff-4c3e-a4dd-4f5c8d251ec0"
+          },
+          "definition": "select id from stations",
+          "description": "The sensor station that gathered the data",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Sensor Station id",
+          "multi": false,
+          "name": "station_id",
+          "options": [],
+          "query": "select id from stations",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "type": "query"
+        }
+      ]
     },
     "time": {
-        "from": "2024-01-22T17:43:28.734Z",
-        "to": "2024-01-22T17:52:54.252Z"
+      "from": "2024-10-07T13:28:29.000Z",
+      "to": "2024-10-07T15:46:28.000Z"
     },
     "timepicker": {},
     "timezone": "",
     "title": "AIQ Data Dashboard",
     "uid": "c5fa12e4-5d12-4cb0-8abb-342a0db016fd",
-    "version": 4,
+    "version": 8,
     "weekStart": ""
-}
+  }
