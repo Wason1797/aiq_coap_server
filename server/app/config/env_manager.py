@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     STATION_TYPE: StationType
     VERSION: str
     ENV: str = "DEV"
-    BORDER_ROUTER_ID: Optional[int] = None
+    SEVRER_INSTANCE_ID: int
     REPLICATION: ReplicationType = ReplicationType.NONE
     WRITE_TO_BACKUP: bool = True
     MAIN_SERVER_URI: Optional[str] = None

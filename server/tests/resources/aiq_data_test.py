@@ -19,12 +19,9 @@ async def test_render_put_in_main_server_from_br(
 ) -> None:
     with mock.patch("app.resources.aiq_data.ManagementBot", mock_management_bot):
         result = await AiqDataResource(
-            is_main_server=True,
             main_session=main_db_session,
             backup_session=backup_db_session,
-            coap_client=None,
             payload_validator=mock_payload_validator,
-            allow_messages_from_br=True,
             allow_backups=True,
         ).render_put(mock_aiq_request_scd41_from_br)
 
@@ -50,12 +47,9 @@ async def test_render_put_in_main_server_from_end_device(
 ) -> None:
     with mock.patch("app.resources.aiq_data.ManagementBot", mock_management_bot):
         result = await AiqDataResource(
-            is_main_server=True,
             main_session=main_db_session,
             backup_session=backup_db_session,
-            coap_client=None,
             payload_validator=mock_payload_validator,
-            allow_messages_from_br=False,
             allow_backups=True,
         ).render_put(mock_aiq_request_scd41_from_end_device)
 
@@ -81,12 +75,9 @@ async def test_render_put_in_br_from_end_device(
 ) -> None:
     with mock.patch("app.resources.aiq_data.ManagementBot", mock_management_bot):
         result = await AiqDataResource(
-            is_main_server=False,
             main_session=main_db_session,
             backup_session=backup_db_session,
-            coap_client=None,
             payload_validator=mock_payload_validator,
-            allow_messages_from_br=False,
         ).render_put(mock_aiq_request_scd41_from_end_device)
 
     assert result.code == CHANGED
@@ -109,13 +100,11 @@ async def test_render_put_in_br_from_end_device_with_forwarding(
     border_router_id = 1
     with mock.patch("app.resources.aiq_data.ManagementBot", mock_management_bot):
         result = await AiqDataResource(
-            is_main_server=False,
             main_session=main_db_session,
             backup_session=backup_db_session,
             coap_client=mock_coap_client,
             payload_validator=mock_payload_validator,
-            allow_messages_from_br=False,
-            border_router_id=border_router_id,
+            server_instance_id=0,
         ).render_put(mock_aiq_request_scd41_from_end_device)
 
     mock_coap_client.put_payload.assert_awaited_once_with(

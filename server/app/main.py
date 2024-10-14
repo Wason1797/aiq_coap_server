@@ -47,13 +47,10 @@ async def main() -> None:
     server.add_resource(
         ["aiq-data"],
         AiqDataResource(
-            EnvManager.is_main_server(),
             PostgresqlConnector.get_session,
             MysqlConnector.get_session,
-            main_coap_client,
             PayloadValidator,
-            EnvManager.BORDER_ROUTER_ID,
-            EnvManager.allow_messages_from_br(),
+            EnvManager.SEVRER_INSTANCE_ID,
             EnvManager.allow_backups(),
         ),
     )
