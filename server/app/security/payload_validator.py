@@ -22,7 +22,7 @@ class PayloadValidator:
             raise RuntimeError("Cannot validate payload before initialization")
 
         payload_chunks = payload.split("|")
-        payload_chunk_count = len(payload_chunks) == 2
+        payload_chunk_count = len(payload_chunks)
 
         assert payload_chunk_count == 2 or payload_chunk_count == 3, f"Invalid payload of size {payload_chunk_count}"
 

@@ -7,7 +7,6 @@ import aiocoap  # type: ignore
 import aiocoap.resource as resource  # type: ignore
 
 from app.config.env_manager import get_settings
-from app.controllers.border_router import BorderRouterController
 from app.log import log
 from app.managers.aiq_manager import AiqDataManager
 from app.managers.br_manager import BorderRouterManager
@@ -15,7 +14,8 @@ from app.managers.station_manager import StationManager
 from app.repositories.aiq_coap.client import CoapClient
 from app.repositories.mysql.database import MysqlConnector
 from app.repositories.postgres.database import PostgresqlConnector
-from app.resources import AiqDataResource, AiqManagementSummaryResource, AiqManagementTruncateResource, IndexResource
+from app.resources import StationDataStorageResource, IndexResource
+from app.resources.station_data_forwarder import StationDataForwarderResource
 from app.security.payload_validator import PayloadValidator
 from app.telegram.bot import ManagementBot
 
@@ -41,24 +41,32 @@ async def main() -> None:
     log.info("Initializing COAP resources")
     binds = ("localhost", None) if EnvManager.is_dev() else None
     main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
-    main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, main_coap_context)
 
     server = resource.Site()
-    server.add_resource(
-        ["aiq-data"],
-        AiqDataResource(
+    aiq_data_resource = None
+
+    if EnvManager.is_main_server():
+        aiq_data_resource = StationDataStorageResource(
             PostgresqlConnector.get_session,
             MysqlConnector.get_session,
             PayloadValidator,
             EnvManager.SEVRER_INSTANCE_ID,
             EnvManager.allow_backups(),
-        ),
-    )
+        )
 
-    server.add_resource(
-        ["index"],
-        IndexResource(EnvManager.VERSION),
-    )
+    else:
+        assert EnvManager.MAIN_SERVER_URI, "Border Routers need MAIN_SERVER_URI to be valid"
+        main_coap_client = CoapClient.get_instance(EnvManager.MAIN_SERVER_URI, main_coap_context)
+        aiq_data_resource = StationDataForwarderResource(
+            MysqlConnector.get_session,
+            PayloadValidator,
+            EnvManager.SEVRER_INSTANCE_ID,
+            main_coap_client,
+            EnvManager.allow_backups(),
+        )
+
+    server.add_resource(["aiq-data"], aiq_data_resource)
+    server.add_resource(["index"], IndexResource(EnvManager.VERSION))
 
     # Register bot commands to manage border routers and main server
     if EnvManager.is_main_server():

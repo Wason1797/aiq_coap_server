@@ -12,7 +12,7 @@ from app.telegram.bot import ManagementBot
 from app.types import AsyncSessionMaker
 
 
-class AiqDataResource(resource.Resource):
+class StationDataStorageResource(resource.Resource):
     def __init__(
         self,
         main_session: AsyncSessionMaker,
@@ -31,7 +31,7 @@ class AiqDataResource(resource.Resource):
     async def render_put(self, request) -> Message:
         try:
             payload: str = request.payload.decode("ascii")
-            log.info(f"[COAP] got request {payload}")
+            log.info(f"[COAP] storage request {payload}")
 
             validated_payload = self.payload_validator.validate(payload, AiqDataFromStation)
 
