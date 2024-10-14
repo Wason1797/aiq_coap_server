@@ -63,18 +63,6 @@ async def main() -> None:
         IndexResource(EnvManager.VERSION),
     )
 
-    if not EnvManager.is_main_server():  # Enable management interface for border routers
-        log.info("Initializing BR Management interface")
-        assert EnvManager.BORDER_ROUTER_ID
-        server.add_resource(
-            ["aiq-management", "summary"],
-            AiqManagementSummaryResource(EnvManager.BORDER_ROUTER_ID, PostgresqlConnector.get_session),
-        )
-        server.add_resource(
-            ["aiq-management", "truncate"],
-            AiqManagementTruncateResource(EnvManager.BORDER_ROUTER_ID, PostgresqlConnector.get_session),
-        )
-
     # Register bot commands to manage border routers and main server
     if EnvManager.is_main_server():
         log.info("Initializing Telegram BOT Commands")
@@ -90,9 +78,6 @@ async def main() -> None:
         ManagementBot.register_commad(
             "register_br",
             partial(BorderRouterManager.register_border_router, PostgresqlConnector.get_session, MysqlConnector.get_session),
-        )
-        ManagementBot.register_commad(
-            "truncate", partial(BorderRouterController.truncate_br_database, PostgresqlConnector.get_session, main_coap_context)
         )
 
     log.info("Starting AIQ Server")

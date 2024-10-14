@@ -187,21 +187,3 @@ async def command_register_station_handler(message: Message, command: CommandObj
         return
 
     await message.answer(result)
-
-
-@ManagementBot.dispatcher.message(Command("truncate"))
-@ManagementBot.validate_command
-async def command_truncate_db_handler(message: Message, command: CommandObject):
-    if not command.args:
-        await message.answer("border_router_id needed")
-        return
-
-    callback = ManagementBot.get_command(command.command)
-    try:
-        result = await callback(command.args)
-    except Exception:
-        trace = traceback.format_exc()
-        await message.answer(f"An error occurred in truncate:\n {trace}")
-        return
-
-    await message.answer(result)
