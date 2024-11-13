@@ -21,5 +21,6 @@ COPY . .
 
 RUN poetry install --only main
 
+EXPOSE 5683/udp
 
 ENTRYPOINT ["bash", "runner.sh"]

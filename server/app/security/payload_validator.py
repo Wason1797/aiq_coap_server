@@ -17,20 +17,16 @@ class PayloadValidator:
         cls.secret_key = secret_key
 
     @classmethod
-    def validate(cls, payload: str, model: Type[BaseModel], is_main_server: bool, allow_messages_from_br: bool) -> ValidatorResult:
+    def validate(cls, payload: str, model: Type[BaseModel]) -> ValidatorResult:
         if not cls.secret_key:
             raise RuntimeError("Cannot validate payload before initialization")
 
         payload_chunks = payload.split("|")
-        if is_main_server and allow_messages_from_br:
-            assert len(payload_chunks) == 3
+        payload_chunk_count = len(payload_chunks)
 
-        if is_main_server and not allow_messages_from_br:
-            assert len(payload_chunks) == 2
-            payload_chunks.append("")
+        assert payload_chunk_count == 2 or payload_chunk_count == 3, f"Invalid payload of size {payload_chunk_count}"
 
-        if not is_main_server:
-            assert len(payload_chunks) == 2
+        if payload_chunk_count == 2:
             payload_chunks.append("")
 
         message, signature_hex, border_router_id = payload_chunks

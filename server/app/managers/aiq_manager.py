@@ -1,12 +1,11 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-
-from app.types import AsyncSessionMaker
 from sqlalchemy import delete, func, select
 
-from app.repositories.db.models import ENS160Data, SCD41Data, StationData
+from app.repositories.db.models import ENS160Data, SCD41Data, StationData, SVM41Data
 from app.serializers.request import AiqDataFromStation
+from app.types import AsyncSessionMaker
 
 SUMMARY_TEMPLATE = """
 Row Count: {}
@@ -83,6 +82,14 @@ class AiqDataManager:
 
         if data.ens160_d:
             sensor_data.ens160_data = ENS160Data(eco2=data.ens160_d.eco2, tvoc=data.ens160_d.tvoc, aqi=data.ens160_d.aqi)
+
+        if data.svm41_d:
+            sensor_data.svm41_data = SVM41Data(
+                temperature=data.svm41_d.temp.to_str_number(),
+                humidity=data.svm41_d.hum.to_str_number(),
+                nox_index=data.svm41_d.nox.to_str_number(),
+                voc_index=data.svm41_d.voc.to_str_number(),
+            )
 
         async with session_maker() as session:
             session.add(sensor_data)

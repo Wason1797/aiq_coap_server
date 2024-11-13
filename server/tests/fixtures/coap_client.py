@@ -6,7 +6,7 @@ import pytest
 from app.repositories.aiq_coap.client import CoapClient
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def mock_coap_client() -> MagicMock:
     mock_client = MagicMock(CoapClient)
 
