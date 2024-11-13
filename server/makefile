@@ -23,6 +23,7 @@ create-env:
 	echo "STATION_TYPE=$$STATION_TYPE" >>.env
 	echo "VERSION=$$VERSION" >>.env
 	echo "ENV=$$ENV" >>.env
+	echo "SEVRER_INSTANCE_ID=1" >> .env
 
 
 .ONESHELL:
