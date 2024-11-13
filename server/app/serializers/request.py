@@ -25,8 +25,8 @@ class ENS160Data(BaseModel):
 class SVM41Data(BaseModel):
     temp: SensorData
     hum: SensorData
-    noxi: SensorData
-    voci: SensorData
+    nox: SensorData
+    voc: SensorData
 
 
 class SPS30Data(BaseModel):
