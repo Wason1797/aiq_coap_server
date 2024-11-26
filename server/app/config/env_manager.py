@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     REPLICATION: ReplicationType = ReplicationType.NONE
     WRITE_TO_BACKUP: bool = True
     MAIN_SERVER_URI: Optional[str] = None
+    BIND: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=".env")
 

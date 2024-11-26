@@ -39,7 +39,7 @@ async def main() -> None:
     PayloadValidator.init_validator(EnvManager.SECRET_KEY)
 
     log.info("Initializing COAP resources")
-    binds = ("localhost", None) if EnvManager.is_dev() else None
+    binds = (EnvManager.BIND or "localhost", None) if EnvManager.is_dev() else None
     main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
 
     server = resource.Site()
