@@ -29,16 +29,16 @@ class SVM41Data(BaseModel):
     voc: SensorData
 
 
-class SPS30Data(BaseModel):
-    pm1: SensorData
-    pm25: SensorData
-    pm10: SensorData
-    tsize: SensorData
+class BME688Data(BaseModel):
+    hum: SensorData
+    temp: SensorData
+    press: SensorData
+    gasres: SensorData
 
 
 class AiqDataFromStation(BaseModel):
     scd41_d: Optional[SCD41Data] = None
     svm41_d: Optional[SVM41Data] = None
     ens160_d: Optional[ENS160Data] = None
-    sps30_d: Optional[SPS30Data] = None
+    bme688_d: Optional[BME688Data] = None
     station_id: int

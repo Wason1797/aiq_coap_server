@@ -6,8 +6,8 @@ from app.types import AsyncSessionMaker
 
 
 @pytest.mark.asyncio
-async def test_save_sensor_data(main_db_session: AsyncSessionMaker, scd41_data_from_station: AiqDataFromStation) -> None:
-    db_id = await AiqDataManager.save_sensor_data(main_db_session, scd41_data_from_station)
+async def test_save_sensor_data(main_db_session: AsyncSessionMaker, full_data_from_station: AiqDataFromStation) -> None:
+    db_id = await AiqDataManager.save_sensor_data(main_db_session, full_data_from_station)
 
     data_in_db = await AiqDataManager.get_sensor_data_by_id(main_db_session, db_id)
 
@@ -31,6 +31,18 @@ async def test_get_summary(main_db_session: AsyncSessionMaker, scd41_data_from_s
     summary = await AiqDataManager.get_summary(main_db_session)
 
     assert summary is not None
+
+
+@pytest.mark.asyncio
+async def test_get_summary_with_full_data(main_db_session: AsyncSessionMaker, full_data_from_station: AiqDataFromStation):
+    await AiqDataManager.save_sensor_data(main_db_session, full_data_from_station)
+    summary = await AiqDataManager.get_summary(main_db_session)
+
+    assert summary is not None
+    assert "SCD41" in summary
+    assert "SVM41" in summary
+    assert "ENS160" in summary
+    assert "BME688" in summary
 
 
 @pytest.mark.asyncio

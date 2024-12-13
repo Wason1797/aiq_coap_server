@@ -3,12 +3,14 @@ from typing import Optional
 
 from sqlalchemy import delete, func, select
 
-from app.repositories.db.models import ENS160Data, SCD41Data, StationData, SVM41Data
+from app.repositories.db.models import BME688Data, ENS160Data, SCD41Data, StationData, SVM41Data
 from app.serializers.request import AiqDataFromStation
 from app.types import AsyncSessionMaker
 
 SUMMARY_TEMPLATE = """
 Row Count: {}
+{}
+{}
 {}
 {}
 border_router_id: {}
@@ -27,6 +29,22 @@ ENS160:
 \taqi: {}
 \teco2: {} ppm
 \ttvoc: {} ppb
+"""
+
+SVM41_SUMMARY_TEMPLATE = """
+SVM41:
+\ttemp: {} C
+\thum: {} H%
+\tnox: {} 
+\tvoc: {} 
+"""
+
+BME688_SUMMARY_TEMPLATE = """
+BME688:
+\ttemp: {} C
+\thum: {} H%
+\tpress: {} KPa
+\tgasres: {} Ohm
 """
 
 
@@ -51,10 +69,34 @@ def _render_summary_template(data: StationData, count: int) -> str:
         else ""
     )
 
+    svm41_summary = (
+        SVM41_SUMMARY_TEMPLATE.format(
+            int(data.svm41_data.temperature) / 1000000,
+            int(data.svm41_data.humidity) / 1000000,
+            int(data.svm41_data.voc_index) / 1000000,
+            int(data.svm41_data.nox_index) / 1000000,
+        )
+        if data.svm41_data is not None
+        else ""
+    )
+
+    bme688_summary = (
+        BME688_SUMMARY_TEMPLATE.format(
+            int(data.bme688_data.temperature) / 1000000,
+            int(data.bme688_data.humidity) / 1000000,
+            int(data.bme688_data.pressure) / 1000000,
+            int(data.bme688_data.gas_resistance) / 1000000,
+        )
+        if data.bme688_data is not None
+        else ""
+    )
+
     return SUMMARY_TEMPLATE.format(
         count,
         scd41_summary,
         ens160_summary,
+        svm41_summary,
+        bme688_summary,
         data.border_router_id,
         data.station_id,
     )
@@ -89,6 +131,14 @@ class AiqDataManager:
                 humidity=data.svm41_d.hum.to_str_number(),
                 nox_index=data.svm41_d.nox.to_str_number(),
                 voc_index=data.svm41_d.voc.to_str_number(),
+            )
+
+        if data.bme688_d:
+            sensor_data.bme688_data = BME688Data(
+                temperature=data.bme688_d.temp.to_str_number(),
+                humidity=data.bme688_d.hum.to_str_number(),
+                pressure=data.bme688_d.press.to_str_number(),
+                gas_resistance=data.bme688_d.gasres.to_str_number(),
             )
 
         async with session_maker() as session:
