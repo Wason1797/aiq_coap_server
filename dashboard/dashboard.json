@@ -342,7 +342,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 28
               }
             ]
           },
@@ -557,7 +557,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
           "mappings": [],
@@ -571,7 +571,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1500
               }
             ]
           },
@@ -948,7 +948,7 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
+            "axisBorderShow": true,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -977,10 +977,11 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
           "mappings": [],
+          "max": 100,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1856,6 +1857,7 @@
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1869,7 +1871,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "conppb"
         },
         "overrides": []
       },
@@ -2010,6 +2013,8 @@
       "fieldConfig": {
         "defaults": {
           "mappings": [],
+          "max": 5,
+          "min": 1,
           "thresholds": {
             "mode": "percentage",
             "steps": [
@@ -2213,13 +2218,13 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-4d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "AIQ Data Dashboard",
   "uid": "c5fa12e4-5d12-4cb0-8abb-342a0db016fd",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }

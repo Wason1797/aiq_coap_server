@@ -74,8 +74,8 @@ def _render_summary_template(data: StationData, count: int) -> str:
         SVM41_SUMMARY_TEMPLATE.format(
             int(data.svm41_data.temperature) / 1000000,
             int(data.svm41_data.humidity) / 1000000,
-            int(data.svm41_data.voc_index) / 1000000,
             int(data.svm41_data.nox_index) / 1000000,
+            int(data.svm41_data.voc_index) / 1000000,
         )
         if data.svm41_data is not None
         else ""
