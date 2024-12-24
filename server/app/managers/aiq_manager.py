@@ -9,6 +9,7 @@ from app.types import AsyncSessionMaker
 
 SUMMARY_TEMPLATE = """
 Row Count: {}
+Last Date: {}
 {}
 {}
 {}
@@ -93,6 +94,7 @@ def _render_summary_template(data: StationData, count: int) -> str:
 
     return SUMMARY_TEMPLATE.format(
         count,
+        datetime.fromtimestamp(float(data.timestamp), timezone.utc).strftime(r"%d/%m/%Y, %H:%M:%S"),
         scd41_summary,
         ens160_summary,
         svm41_summary,
