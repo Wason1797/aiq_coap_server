@@ -61,11 +61,11 @@ class StationData(BaseDBConnector.Base):
     bme688_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("bme688_data.id"), nullable=True)
 
     # Id of the individual sensor station submitting the data
-    station_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("stations.id"), nullable=False)
+    station_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("stations.id"), nullable=False, index=True)
     # Id of the border router forwarding the data
-    border_router_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("border_routers.id"), nullable=True)
+    border_router_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("border_routers.id"), nullable=True, index=True)
 
-    timestamp: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+    timestamp: Mapped[str] = mapped_column(VARCHAR(20), nullable=False, index=True)
 
     scd41_data: Mapped[SCD41Data] = relationship("SCD41Data", lazy="joined")
     ens160_data: Mapped[ENS160Data] = relationship("ENS160Data", lazy="joined")
