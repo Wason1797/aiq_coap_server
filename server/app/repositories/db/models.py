@@ -7,7 +7,7 @@ from app.repositories.db.connector import BaseDBConnector
 class SCD41Data(BaseDBConnector.Base):
     __tablename__ = "scd41_data"
 
-    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False, index=True)
     co2: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
     temperature: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
     humidity: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
@@ -18,7 +18,7 @@ class SCD41Data(BaseDBConnector.Base):
 class ENS160Data(BaseDBConnector.Base):
     __tablename__ = "ens160_data"
 
-    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False, index=True)
     eco2: Mapped[int]
     tvoc: Mapped[int]
     aqi: Mapped[int]
@@ -29,7 +29,7 @@ class ENS160Data(BaseDBConnector.Base):
 class SVM41Data(BaseDBConnector.Base):
     __tablename__ = "svm41_data"
 
-    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False, index=True)
     temperature: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
     humidity: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
     nox_index: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
@@ -41,7 +41,7 @@ class SVM41Data(BaseDBConnector.Base):
 class BME688Data(BaseDBConnector.Base):
     __tablename__ = "bme688_data"
 
-    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False, index=True)
     temperature: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
     humidity: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
     pressure: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
@@ -53,7 +53,7 @@ class BME688Data(BaseDBConnector.Base):
 class StationData(BaseDBConnector.Base):
     __tablename__ = "station_data"
 
-    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False)
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False, index=True)
 
     scd41_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("scd41_data.id"), nullable=True)
     ens160_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("ens160_data.id"), nullable=True)
