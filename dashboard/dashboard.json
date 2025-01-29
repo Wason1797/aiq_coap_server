@@ -326,8 +326,8 @@
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
-          "min": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -341,7 +341,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "conppb"
         },
         "overrides": []
       },
@@ -351,13 +351,13 @@
         "x": 14,
         "y": 1
       },
-      "id": 13,
+      "id": 4,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -374,7 +374,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \"timestamp\", svm41_data.voc_index FROM station_data inner join svm41_data on station_data.svm41_data_id=svm41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+          "rawSql": "SELECT \"timestamp\", tvoc FROM station_data inner join ens160_data on station_data.ens160_data_id=ens160_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -390,14 +390,21 @@
               {
                 "parameters": [
                   {
-                    "name": "temperature",
+                    "name": "tvoc",
                     "type": "functionParameter"
                   }
                 ],
                 "type": "function"
               }
             ],
-            "groupBy": [],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
             "orderBy": {
               "property": {
                 "name": [
@@ -406,36 +413,12 @@
                 "type": "string"
               },
               "type": "property"
-            },
-            "whereJsonTree": {
-              "children1": [
-                {
-                  "id": "9998aa99-4567-489a-bcde-f18d32790d4b",
-                  "properties": {
-                    "field": "sensor_id",
-                    "fieldSrc": "field",
-                    "operator": "equal",
-                    "value": [
-                      null
-                    ],
-                    "valueSrc": [
-                      "value"
-                    ],
-                    "valueType": [
-                      "number"
-                    ]
-                  },
-                  "type": "rule"
-                }
-              ],
-              "id": "ab9a999b-0123-4456-b89a-b18d31e02971",
-              "type": "group"
             }
           },
           "table": "sensor_data"
         }
       ],
-      "title": "SVM41 VOC Index",
+      "title": "ENS160 VOC",
       "transformations": [
         {
           "id": "convertFieldType",
@@ -444,10 +427,6 @@
               {
                 "destinationType": "number",
                 "targetField": "timestamp"
-              },
-              {
-                "destinationType": "number",
-                "targetField": "voc_index"
               }
             ],
             "fields": {}
@@ -461,22 +440,6 @@
               "left": "timestamp",
               "operator": "*",
               "right": "1000"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            },
-            "replaceFields": false
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "voc_i",
-            "binary": {
-              "left": "voc_index",
-              "operator": "/",
-              "right": "1000000"
             },
             "mode": "binary",
             "reduce": {
@@ -500,11 +463,10 @@
         {
           "id": "filterFieldsByName",
           "options": {
-            "byVariable": false,
             "include": {
               "names": [
                 "Timestamp",
-                "voc_i"
+                "tvoc"
               ]
             }
           }
@@ -761,8 +723,8 @@
               "mode": "off"
             }
           },
-          "fieldMinMax": false,
           "mappings": [],
+          "min": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -776,7 +738,7 @@
               }
             ]
           },
-          "unit": "conppb"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -786,13 +748,13 @@
         "x": 14,
         "y": 7
       },
-      "id": 4,
+      "id": 13,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -809,7 +771,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \"timestamp\", tvoc FROM station_data inner join ens160_data on station_data.ens160_data_id=ens160_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+          "rawSql": "SELECT \"timestamp\", svm41_data.voc_index FROM station_data inner join svm41_data on station_data.svm41_data_id=svm41_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -825,21 +787,14 @@
               {
                 "parameters": [
                   {
-                    "name": "tvoc",
+                    "name": "temperature",
                     "type": "functionParameter"
                   }
                 ],
                 "type": "function"
               }
             ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
+            "groupBy": [],
             "orderBy": {
               "property": {
                 "name": [
@@ -848,12 +803,36 @@
                 "type": "string"
               },
               "type": "property"
+            },
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "9998aa99-4567-489a-bcde-f18d32790d4b",
+                  "properties": {
+                    "field": "sensor_id",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "number"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "ab9a999b-0123-4456-b89a-b18d31e02971",
+              "type": "group"
             }
           },
           "table": "sensor_data"
         }
       ],
-      "title": "ENS160 VOC",
+      "title": "SVM41 VOC Index",
       "transformations": [
         {
           "id": "convertFieldType",
@@ -862,6 +841,10 @@
               {
                 "destinationType": "number",
                 "targetField": "timestamp"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "voc_index"
               }
             ],
             "fields": {}
@@ -875,6 +858,22 @@
               "left": "timestamp",
               "operator": "*",
               "right": "1000"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "voc_i",
+            "binary": {
+              "left": "voc_index",
+              "operator": "/",
+              "right": "1000000"
             },
             "mode": "binary",
             "reduce": {
@@ -898,10 +897,11 @@
         {
           "id": "filterFieldsByName",
           "options": {
+            "byVariable": false,
             "include": {
               "names": [
                 "Timestamp",
-                "tvoc"
+                "voc_i"
               ]
             }
           }
@@ -1345,19 +1345,27 @@
           "max": 5,
           "min": 1,
           "thresholds": {
-            "mode": "percentage",
+            "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
               },
               {
+                "color": "#6ED0E0",
+                "value": 2
+              },
+              {
+                "color": "#EAB839",
+                "value": 3
+              },
+              {
                 "color": "orange",
-                "value": 70
+                "value": 4
               },
               {
                 "color": "red",
-                "value": 85
+                "value": 5
               }
             ]
           }
@@ -1538,7 +1546,7 @@
             "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 1,
-            "pointSize": 5,
+            "pointSize": 3,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -2838,7 +2846,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2846,220 +2854,219 @@
         "y": 46
       },
       "id": 21,
-      "panels": [
+      "panels": [],
+      "title": "Ambient Pressure Measurements",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "pressurekpa"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.2.0",
+      "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
             "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \"timestamp\", pressure FROM station_data inner join bme688_data on station_data.bme688_data_id=bme688_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
                   {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
+                    "name": "\"timestamp\"",
+                    "type": "functionParameter"
                   }
-                ]
+                ],
+                "type": "function"
               },
-              "unit": "pressurepa"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 24,
-            "x": 0,
-            "y": 1
-          },
-          "id": 16,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
+              {
+                "parameters": [
+                  {
+                    "name": "humidity",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "orderBy": {
+              "property": {
+                "name": [
+                  "\"timestamp\""
+                ],
+                "type": "string"
+              },
+              "type": "property"
             }
           },
-          "pluginVersion": "11.2.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "grafana-postgresql-datasource",
-                "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "SELECT \"timestamp\", pressure FROM station_data inner join bme688_data on station_data.bme688_data_id=bme688_data.id WHERE station_id = $station_id AND border_router_id = $border_router_id ORDER BY \"timestamp\" ",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "\"timestamp\"",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  },
-                  {
-                    "parameters": [
-                      {
-                        "name": "humidity",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "orderBy": {
-                  "property": {
-                    "name": [
-                      "\"timestamp\""
-                    ],
-                    "type": "string"
-                  },
-                  "type": "property"
-                }
-              },
-              "table": "sensor_data"
-            }
-          ],
-          "title": "BME688 Ambient Pressure",
-          "transformations": [
-            {
-              "id": "convertFieldType",
-              "options": {
-                "conversions": [
-                  {
-                    "destinationType": "number",
-                    "targetField": "timestamp"
-                  },
-                  {
-                    "destinationType": "number",
-                    "targetField": "pressure"
-                  }
-                ],
-                "fields": {}
-              }
-            },
-            {
-              "id": "calculateField",
-              "options": {
-                "alias": "Timestamp",
-                "binary": {
-                  "left": "timestamp",
-                  "operator": "*",
-                  "right": "1000"
-                },
-                "mode": "binary",
-                "reduce": {
-                  "reducer": "sum"
-                },
-                "replaceFields": false
-              }
-            },
-            {
-              "id": "calculateField",
-              "options": {
-                "alias": "Pressure",
-                "binary": {
-                  "left": "pressure",
-                  "operator": "/",
-                  "right": "1000000"
-                },
-                "mode": "binary",
-                "reduce": {
-                  "reducer": "sum"
-                },
-                "replaceFields": false
-              }
-            },
-            {
-              "id": "convertFieldType",
-              "options": {
-                "conversions": [
-                  {
-                    "destinationType": "time",
-                    "targetField": "Timestamp"
-                  }
-                ],
-                "fields": {}
-              }
-            },
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "Timestamp",
-                    "Pressure"
-                  ]
-                }
-              }
-            }
-          ],
-          "type": "timeseries"
+          "table": "sensor_data"
         }
       ],
-      "title": "Ambient Pressure Measurements",
-      "type": "row"
+      "title": "BME688 Ambient Pressure",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "timestamp"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "pressure"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Timestamp",
+            "binary": {
+              "left": "timestamp",
+              "operator": "*",
+              "right": "1000"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Pressure",
+            "binary": {
+              "left": "pressure",
+              "operator": "/",
+              "right": "1000000"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "time",
+                "targetField": "Timestamp"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Timestamp",
+                "Pressure"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
     }
   ],
   "refresh": "1m",
@@ -3112,13 +3119,13 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "AIQ Data Dashboard",
   "uid": "c5fa12e4-5d12-4cb0-8abb-342a0db016fd",
-  "version": 10,
+  "version": 15,
   "weekStart": ""
 }
