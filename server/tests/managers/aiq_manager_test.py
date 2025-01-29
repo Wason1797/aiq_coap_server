@@ -46,11 +46,11 @@ async def test_get_summary_with_full_data(main_db_session: AsyncSessionMaker, fu
 
 
 @pytest.mark.asyncio
-async def test_get_summary_by_station_id(main_db_session: AsyncSessionMaker, scd41_data_from_station: AiqDataFromStation):
+async def test_get_summary_by_station_with_station_id(main_db_session: AsyncSessionMaker, scd41_data_from_station: AiqDataFromStation):
     await AiqDataManager.save_sensor_data(main_db_session, scd41_data_from_station)
-    null_summary = await AiqDataManager.get_summary_by_station_id(main_db_session, -1)
+    null_summary = await AiqDataManager.get_summary(main_db_session, -1)
     assert "not found" in null_summary
-    summary = await AiqDataManager.get_summary_by_station_id(
+    summary = await AiqDataManager.get_summary(
         main_db_session,
         scd41_data_from_station.station_id,
     )

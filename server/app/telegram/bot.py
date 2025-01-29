@@ -96,8 +96,23 @@ async def command_summary_handler(message: Message, command: CommandObject):
         await message.answer("Command not supported")
 
     callback = ManagementBot.get_command(command.command)
+
+    station_id: Optional[int] = None
+
+    if command.args:
+        cmd_args = command.args.split()
+        if len(cmd_args) > 1:
+            await message.answer("Incorrect number of arguments, only station_id is needed")
+            return
+
+        try:
+            station_id = int(cmd_args[0])
+        except TypeError:
+            await message.answer(f"station_id: {station_id} is not a valid int")
+            return
+
     try:
-        result = await callback()
+        result = await callback(station_id)
     except Exception:
         trace = traceback.format_exc()
         await message.answer(f"An error occurred in summary:\n {trace}")

@@ -156,27 +156,21 @@ class AiqDataManager:
         return result.scalar_one_or_none()
 
     @staticmethod
-    async def get_summary(session_maker: AsyncSessionMaker) -> str:
-        query = select(StationData).order_by(StationData.id.desc()).limit(1)
+    async def get_summary(session_maker: AsyncSessionMaker, station_id: Optional[int] = None) -> str:
+        query = select(StationData)
+
+        if station_id is not None:
+            query = query.where(StationData.station_id == station_id)
+
+        query = query.order_by(StationData.id.desc()).limit(1)
         async with session_maker() as session:
             result = (await session.scalars(query)).first()
             if not result:
-                return "Database is empty"
+                return "Database is empty" if station_id is None else f"Results for sensor {station_id}  not found"
+
             count = await session.scalar(select(func.count()).select_from(StationData))
 
         return _render_summary_template(result, count or 0)
-
-    @staticmethod
-    async def get_summary_by_station_id(session_maker: AsyncSessionMaker, station_id: int) -> str:
-        query = select(StationData).where(StationData.station_id == station_id).order_by(StationData.id.desc()).limit(1)
-
-        async with session_maker() as session:
-            result = (await session.scalars(query)).first()
-
-            if not result:
-                return f"Results for sensor {station_id}  not found"
-
-        return _render_summary_template(result, 1)
 
     @staticmethod
     async def truncate_db(session_maker: AsyncSessionMaker) -> str:

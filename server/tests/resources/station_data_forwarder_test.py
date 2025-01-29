@@ -29,7 +29,7 @@ async def test_render_put_in_br_from_end_device_no_backups(
 
     assert result.code == CHANGED
 
-    summary_backup = await AiqDataManager.get_summary_by_station_id(backup_db_session, mock_station_id)
+    summary_backup = await AiqDataManager.get_summary(backup_db_session, mock_station_id)
 
     assert "not found" in summary_backup
 
@@ -56,6 +56,6 @@ async def test_render_put_in_br_from_end_device_with_backup(
     )
     assert result.code == CHANGED
 
-    summary_main = await AiqDataManager.get_summary_by_station_id(backup_db_session, mock_station_id)
+    summary_main = await AiqDataManager.get_summary(backup_db_session, mock_station_id)
 
     assert "not found" not in summary_main
