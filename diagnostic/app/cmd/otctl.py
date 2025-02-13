@@ -1,6 +1,11 @@
 import asyncio
+from cachetools import TTLCache
+from asyncache import cached
+
+cache = TTLCache(ttl=30)
 
 
+@cached(cache=cache)
 async def get_meshdiag_topology() -> str:
     try:
         proc = await asyncio.create_subprocess_exec(
