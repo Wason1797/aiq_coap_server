@@ -2,35 +2,25 @@
 lint.ignore = ["E203","E231","E261","E402","E501","E711","E712","E722","W605","E741"]
 line-length = 135
 
-[tool.mypy]
-plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
 
 [tool.poetry]
-name = "app"
+name = "diagnostic"
 version = "0.1.0"
 description = ""
 authors = ["Wladymir Brborich <wabrborich@hotmail.com>"]
+package-mode = false
 readme = "README.md"
+
 
 [tool.poetry.dependencies]
 python = "^3.11"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.25"}
-asyncpg = "^0.29.0"
-pydantic-settings = "^2.1.0"
-aiocoap = "^0.4.11"
-aiogram = "^3.4.1"
-asyncmy = "^0.2.9"
-cryptography = "^42.0.1"
-alembic = "^1.13.1"
-
+fastapi = "^0.115.8"
+uvicorn = "^0.34.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.2"
 mypy = "^1.8.0"
-pytest = "^8.3.2"
-aiosqlite = "^0.20.0"
-pytest-asyncio = "^0.24.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
