@@ -14,7 +14,7 @@ async def get_meshdiag_topology() -> str:
             if "Done" in line:
                 break
 
-            stdout_str += line.decode()
+            stdout_str += line
 
         rc = await proc.wait()
 
