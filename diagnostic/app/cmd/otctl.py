@@ -19,6 +19,8 @@ async def get_meshdiag_topology() -> str:
 
         rc = await proc.wait()
 
+        print(stdout_str)
+
         if rc != 0:
             print("ERROR RUNNING COMMAND:", await proc.stderr.readline().decode())
             return ""
