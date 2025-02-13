@@ -11,11 +11,10 @@ async def get_meshdiag_topology() -> str:
 
         while True:
             line = (await proc.stdout.readuntil(b"\r\n")).decode()
-            print(line)
+            stdout_str += line
+
             if "Done" in line:
                 break
-
-            stdout_str += line
 
         rc = await proc.wait()
 
