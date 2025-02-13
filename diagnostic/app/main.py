@@ -8,7 +8,7 @@ app = FastAPI(title="Open Thread Diagnostics")
 
 @app.get("/topology")
 async def get_topology():
-    topology_str = get_meshdiag_topology()
+    topology_str = await get_meshdiag_topology()
 
     if topology_str == "":
         raise HTTPException(status_code=500, detail="unable to run ot-ctl cmd")

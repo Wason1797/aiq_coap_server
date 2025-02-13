@@ -1,15 +1,21 @@
-import subprocess
+import asyncio
 
 
-def get_meshdiag_topology() -> str:
+async def get_meshdiag_topology() -> str:
     try:
-        result = subprocess.run(["ot-ctl", "meshdiag", "topology"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = await asyncio.create_subprocess_exec(
+            "sudo ot-ctl", "meshdiag", "topology", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
 
-        if result.returncode != 0:
-            print("ERROR RUNNING COMMAND:", result.stderr.decode())
+        stdout, stderr = await proc.communicate()
+
+        stderr
+
+        if stderr:
+            print("ERROR RUNNING COMMAND:", stderr.decode())
             return ""
 
-        output = result.stdout.decode()
+        output = stdout.decode()
 
         if "Error" in output:
             print("ERROR RUNNING COMMAND:", output)
