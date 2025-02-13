@@ -154,7 +154,7 @@ def make_serializable_graph(nodes: list[Node]) -> dict:
         for idx, link in enumerate(node.links):
             target, quality = link
             graph["edges"].append(
-                {"id": f"node_{node.id}_link_{idx+1}", "source": node.id, "target": target, "thikness": quality, "color": "orange"}
+                {"id": f"node_{node.id}_link_{idx+1}", "source": node.id, "target": target, "thickness": quality, "color": "orange"}
             )
 
     return graph
