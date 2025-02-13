@@ -2,7 +2,7 @@ import asyncio
 from cachetools import TTLCache
 from asyncache import cached
 
-cache = TTLCache(ttl=30)
+cache = TTLCache(maxsize=1024, ttl=30)
 
 
 @cached(cache=cache)
