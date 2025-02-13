@@ -18,8 +18,6 @@ async def get_meshdiag_topology() -> str:
 
         rc = await proc.wait()
 
-        print(stdout_str)
-
         if rc != 0:
             print("ERROR RUNNING COMMAND:", await proc.stderr.readline().decode())
             return ""
@@ -28,7 +26,7 @@ async def get_meshdiag_topology() -> str:
             print("ERROR RUNNING COMMAND:", stdout_str)
             return ""
 
-        return stdout_str
+        return stdout_str.replace("\r", "")
 
     except FileNotFoundError:
         print("ERROR RUNNING COMMAND: ot-ctl not installed")
