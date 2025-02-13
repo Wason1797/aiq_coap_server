@@ -10,15 +10,14 @@ async def get_meshdiag_topology() -> str:
         stdout_str = ""
 
         while True:
-            line = (await proc.stdout.readline()).decode()
+            line = (await proc.stdout.readuntil(b"\r\n")).decode()
+            print(line)
             if "Done" in line:
                 break
 
             stdout_str += line
 
         rc = await proc.wait()
-
-        print(await proc.stdout.readuntil(b"Done"))
 
         if rc != 0:
             print("ERROR RUNNING COMMAND:", await proc.stderr.readline().decode())
