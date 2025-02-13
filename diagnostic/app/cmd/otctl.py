@@ -9,7 +9,7 @@ cache = TTLCache(maxsize=1024, ttl=30)
 async def get_meshdiag_topology() -> str:
     try:
         proc = await asyncio.create_subprocess_exec(
-            "sudo ot-ctl meshdiag topology", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, shell=True
+            "sudo", "ot-ctl", "meshdiag", "topology", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, shell=True
         )
 
         stdout_str = ""
