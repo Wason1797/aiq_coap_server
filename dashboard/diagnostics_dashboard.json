@@ -1,0 +1,246 @@
+{
+    "__inputs": [
+        {
+            "name": "DS_130_BR_HTTP",
+            "label": "130_BR_HTTP",
+            "description": "",
+            "type": "datasource",
+            "pluginId": "yesoreyeram-infinity-datasource",
+            "pluginName": "Infinity"
+        },
+        {
+            "name": "DS_BR_32_HTTP",
+            "label": "BR_32_HTTP",
+            "description": "",
+            "type": "datasource",
+            "pluginId": "yesoreyeram-infinity-datasource",
+            "pluginName": "Infinity"
+        }
+    ],
+    "__elements": {},
+    "__requires": [
+        {
+            "type": "grafana",
+            "id": "grafana",
+            "name": "Grafana",
+            "version": "11.2.0"
+        },
+        {
+            "type": "panel",
+            "id": "volkovlabs-echarts-panel",
+            "name": "Business Charts",
+            "version": "6.5.0"
+        },
+        {
+            "type": "datasource",
+            "id": "yesoreyeram-infinity-datasource",
+            "name": "Infinity",
+            "version": "3.0.0-beta.1"
+        }
+    ],
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "yesoreyeram-infinity-datasource",
+                "uid": "${DS_130_BR_HTTP}"
+            },
+            "gridPos": {
+                "h": 23,
+                "w": 11,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "baidu": {
+                    "callback": "bmapReady",
+                    "key": ""
+                },
+                "editor": {
+                    "format": "auto"
+                },
+                "editorMode": "visual",
+                "gaode": {
+                    "key": "",
+                    "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "const series = context.panel.data.series.map((s) => {\n  const sData = s.fields.find((f) => f.type === 'number').values.buffer || s.fields.find((f) => f.type === 'number').values;\n  const sTime = s.fields.find((f) => f.type === 'time').values.buffer || s.fields.find((f) => f.type === 'time').values;\n  \n  return {\n    name: s.refId,\n    type: 'line',\n    showSymbol: false,\n    areaStyle: {\n      opacity: 0.1,\n    },\n    lineStyle: {\n      width: 1,\n    },\n    data: sData.map((d, i) => [sTime[i], d.toFixed(2)]),\n  };\n});\n\n/**\n * Enable Data Zoom by default\n */\nsetTimeout(() => context.panel.chart.dispatchAction({\n  type: 'takeGlobalCursor',\n  key: 'dataZoomSelect',\n  dataZoomSelectActive: true,\n}), 500);\n\n/**\n * Update Time Range on Zoom\n */\ncontext.panel.chart.on('datazoom', function (params) {\n  const startValue = params.batch[0]?.startValue;\n  const endValue = params.batch[0]?.endValue;\n  locationService.partial({ from: startValue, to: endValue });\n});\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'axis',\n  },\n  legend: {\n    left: '0',\n    bottom: '0',\n    data: context.panel.data.series.map((s) => s.refId),\n    textStyle: {\n      color: 'rgba(128, 128, 128, .9)',\n    },\n  },\n  toolbox: {\n    feature: {\n      dataZoom: {\n        yAxisIndex: 'none',\n        icon: {\n          zoom: 'path://',\n          back: 'path://',\n        },\n      },\n      saveAsImage: {},\n    }\n  },\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n  grid: {\n    left: '2%',\n    right: '2%',\n    top: '2%',\n    bottom: 24,\n    containLabel: true,\n  },\n  series,\n};",
+                "google": {
+                    "callback": "gmapReady",
+                    "key": ""
+                },
+                "map": "none",
+                "renderer": "canvas",
+                "themeEditor": {
+                    "config": "{}",
+                    "name": "default"
+                },
+                "visualEditor": {
+                    "code": "const [labels, data] = context.editor.dataset.source\n\nconst edgesIndex = labels.indexOf(\"Nodes:edges\")\nconst nodesIndex = labels.indexOf(\"Nodes:nodes\")\nconst edges = JSON.parse(data[edgesIndex]).filter(e => e.thickness > 2).map(e => ({\n  ...e,\n  lineStyle: { color: e.color === \"orange\" ? \"#FB773C\" : e.color, width: e.thickness * 1.1 },\n  \"symbol\": [\"arrow\", \"arrow\"],\n  ignoreForceLayout: true,\n\n}))\n\nconst nodes = JSON.parse(data[nodesIndex]).map(n => ({\n  id: n.id, symbolSize: 60, draggable: true,\n  name: n.title, \n  value: n.subtitle,\n  itemStyle: {\n    color: n.color === \"green\" ? \"#4F1787\" : (n.color == \"blue\" ? \"#EB3678\" : n.color),\n\n  },\n  label: {\n    show: true,\n  },\n  \n  \"symbol\": n.highlighted ? \"roundRect\" : \"circle\"\n}))\n\nreturn {\n  tooltip: {\n  },\n  series: [\n    {\n      // autoCurveness: true,\n      type: 'graph',\n      layout: 'force',\n      animation: false,\n      data: nodes,\n      force: {\n        initLayout: 'circular',\n        gravity: 0.1,\n        repulsion: 700,\n        edgeLength: 1290,\n        roam: true\n      },\n      edges: edges,\n      \n    }\n  ]\n\n}\n",
+                    "dataset": [
+                        {
+                            "name": "edges",
+                            "source": "Nodes"
+                        },
+                        {
+                            "name": "nodes",
+                            "source": "Nodes"
+                        }
+                    ],
+                    "series": []
+                }
+            },
+            "pluginVersion": "6.5.0",
+            "targets": [
+                {
+                    "columns": [],
+                    "datasource": {
+                        "type": "yesoreyeram-infinity-datasource",
+                        "uid": "${DS_130_BR_HTTP}"
+                    },
+                    "filters": [],
+                    "format": "as-is",
+                    "global_query_id": "",
+                    "groq": "*",
+                    "json_options": {
+                        "columnar": false,
+                        "root_is_not_array": true
+                    },
+                    "parser": "backend",
+                    "refId": "Nodes",
+                    "root_selector": "",
+                    "source": "url",
+                    "type": "json",
+                    "uql": "parse-json",
+                    "url": "/topology",
+                    "url_options": {
+                        "data": "",
+                        "method": "GET"
+                    }
+                }
+            ],
+            "title": "Thread Network Topology 10.80.2.130",
+            "type": "volkovlabs-echarts-panel"
+        },
+        {
+            "datasource": {
+                "type": "yesoreyeram-infinity-datasource",
+                "uid": "${DS_BR_32_HTTP}"
+            },
+            "gridPos": {
+                "h": 23,
+                "w": 13,
+                "x": 11,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "baidu": {
+                    "callback": "bmapReady",
+                    "key": ""
+                },
+                "editor": {
+                    "format": "auto"
+                },
+                "editorMode": "visual",
+                "gaode": {
+                    "key": "",
+                    "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "const series = context.panel.data.series.map((s) => {\n  const sData = s.fields.find((f) => f.type === 'number').values.buffer || s.fields.find((f) => f.type === 'number').values;\n  const sTime = s.fields.find((f) => f.type === 'time').values.buffer || s.fields.find((f) => f.type === 'time').values;\n  \n  return {\n    name: s.refId,\n    type: 'line',\n    showSymbol: false,\n    areaStyle: {\n      opacity: 0.1,\n    },\n    lineStyle: {\n      width: 1,\n    },\n    data: sData.map((d, i) => [sTime[i], d.toFixed(2)]),\n  };\n});\n\n/**\n * Enable Data Zoom by default\n */\nsetTimeout(() => context.panel.chart.dispatchAction({\n  type: 'takeGlobalCursor',\n  key: 'dataZoomSelect',\n  dataZoomSelectActive: true,\n}), 500);\n\n/**\n * Update Time Range on Zoom\n */\ncontext.panel.chart.on('datazoom', function (params) {\n  const startValue = params.batch[0]?.startValue;\n  const endValue = params.batch[0]?.endValue;\n  locationService.partial({ from: startValue, to: endValue });\n});\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'axis',\n  },\n  legend: {\n    left: '0',\n    bottom: '0',\n    data: context.panel.data.series.map((s) => s.refId),\n    textStyle: {\n      color: 'rgba(128, 128, 128, .9)',\n    },\n  },\n  toolbox: {\n    feature: {\n      dataZoom: {\n        yAxisIndex: 'none',\n        icon: {\n          zoom: 'path://',\n          back: 'path://',\n        },\n      },\n      saveAsImage: {},\n    }\n  },\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n  grid: {\n    left: '2%',\n    right: '2%',\n    top: '2%',\n    bottom: 24,\n    containLabel: true,\n  },\n  series,\n};",
+                "google": {
+                    "callback": "gmapReady",
+                    "key": ""
+                },
+                "map": "none",
+                "renderer": "canvas",
+                "themeEditor": {
+                    "config": "{}",
+                    "name": "default"
+                },
+                "visualEditor": {
+                    "code": "const [labels, data] = context.editor.dataset.source\n\nconst edgesIndex = labels.indexOf(\"Nodes:edges\")\nconst nodesIndex = labels.indexOf(\"Nodes:nodes\")\nconst edges = JSON.parse(data[edgesIndex]).filter(e => e.thickness > 2).map(e => ({\n  ...e,\n  lineStyle: { color: e.color === \"orange\" ? \"#FB773C\" : e.color, width: e.thickness * 1.1 },\n  \"symbol\": [\"arrow\", \"arrow\"],\n  ignoreForceLayout: true,\n\n}))\n\nconst nodes = JSON.parse(data[nodesIndex]).map(n => ({\n  id: n.id, symbolSize: 60, draggable: true,\n  name: n.title,\n  value: n.subtitle,\n  itemStyle: {\n    color: n.color === \"green\" ? \"#4F1787\" : (n.color == \"blue\" ? \"#EB3678\" : n.color),\n\n  },\n  label: {\n    show: true,\n  },\n\n  \"symbol\": n.highlighted ? \"roundRect\" : \"circle\"\n}))\n\nreturn {\n  tooltip: {\n  },\n  series: [\n    {\n      // autoCurveness: true,\n      type: 'graph',\n      layout: 'force',\n      animation: false,\n      data: nodes,\n      force: {\n        initLayout: 'circular',\n        gravity: 0.1,\n        repulsion: 700,\n        edgeLength: 1290,\n        roam: true\n      },\n      edges: edges,\n\n    }\n  ]\n\n}\n",
+                    "dataset": [
+                        {
+                            "name": "edges",
+                            "source": "Nodes"
+                        },
+                        {
+                            "name": "nodes",
+                            "source": "Nodes"
+                        }
+                    ],
+                    "series": []
+                }
+            },
+            "pluginVersion": "6.5.0",
+            "targets": [
+                {
+                    "columns": [],
+                    "datasource": {
+                        "type": "yesoreyeram-infinity-datasource",
+                        "uid": "${DS_BR_32_HTTP}"
+                    },
+                    "filters": [],
+                    "format": "as-is",
+                    "global_query_id": "",
+                    "groq": "*",
+                    "json_options": {
+                        "columnar": false,
+                        "root_is_not_array": true
+                    },
+                    "parser": "backend",
+                    "refId": "Nodes",
+                    "root_selector": "",
+                    "source": "url",
+                    "type": "json",
+                    "uql": "parse-json",
+                    "url": "/topology",
+                    "url_options": {
+                        "data": "",
+                        "method": "GET"
+                    }
+                }
+            ],
+            "title": "Thread Network Topology 10.80.2.32",
+            "type": "volkovlabs-echarts-panel"
+        }
+    ],
+    "refresh": "",
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Open Thread Diagnostics",
+    "uid": "becyipz940hdsd",
+    "version": 6,
+    "weekStart": ""
+}

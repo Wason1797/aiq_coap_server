@@ -1948,6 +1948,21 @@
           }
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "Corrected Temperature",
+            "binary": {
+              "left": "Temperature",
+              "operator": "-",
+              "right": "3"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "convertFieldType",
           "options": {
             "conversions": [
@@ -1965,6 +1980,7 @@
             "include": {
               "names": [
                 "Timestamp",
+                "Corrected Temperature",
                 "Temperature"
               ]
             }
@@ -2820,6 +2836,20 @@
           }
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "Corrected Humidity",
+            "binary": {
+              "left": "Humidity",
+              "right": "8"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "convertFieldType",
           "options": {
             "conversions": [
@@ -2837,7 +2867,8 @@
             "include": {
               "names": [
                 "Timestamp",
-                "Humidity"
+                "Humidity",
+                "Corrected Humidity"
               ]
             }
           }
@@ -3069,7 +3100,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "1m",
+  "refresh": "30s",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -3119,13 +3150,13 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "AIQ Data Dashboard",
   "uid": "c5fa12e4-5d12-4cb0-8abb-342a0db016fd",
-  "version": 15,
+  "version": 16,
   "weekStart": ""
 }
