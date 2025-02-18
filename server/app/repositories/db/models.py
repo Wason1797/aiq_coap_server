@@ -50,6 +50,17 @@ class BME688Data(BaseDBConnector.Base):
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_bme688_data"),)
 
 
+class SFA30Data(BaseDBConnector.Base):
+    __tablename__ = "sfa30_data"
+
+    id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False, index=True)
+    temperature: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+    humidity: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+    hco: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
+
+    __table_args__ = (PrimaryKeyConstraint("id", name="pk_sfa30_data"),)
+
+
 class StationData(BaseDBConnector.Base):
     __tablename__ = "station_data"
 
@@ -59,6 +70,7 @@ class StationData(BaseDBConnector.Base):
     ens160_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("ens160_data.id"), nullable=True)
     svm41_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("svm41_data.id"), nullable=True)
     bme688_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("bme688_data.id"), nullable=True)
+    sfa30_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("sfa30_data.id"), nullable=True)
 
     # Id of the individual sensor station submitting the data
     station_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("stations.id"), nullable=False, index=True)

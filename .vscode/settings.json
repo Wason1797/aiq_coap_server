@@ -1,8 +1,5 @@
 {
-    "mypy-type-checker.cwd": "${workspaceFolder}/server",
-    "python.testing.pytestArgs": [
-        "server"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+  "python.testing.pytestArgs": ["server"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }
