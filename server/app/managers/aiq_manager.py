@@ -51,7 +51,7 @@ BME688:
 
 SFA30_SUMMARY_TEMPLATE = """
 SFA30:
-\hco: {} ppb
+\thco: {} ppb
 \ttemp: {} C
 \thum: {} H%
 """
