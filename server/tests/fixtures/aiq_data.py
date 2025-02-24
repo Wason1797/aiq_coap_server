@@ -24,17 +24,19 @@ def mock_station_id() -> int:
 def mock_aiq_request_scd41_from_br(mock_station_id: int) -> MockRequest:
     """Don't forget to update the signature if you change the data"""
 
-    return MockRequest(
-        payload=f"{json.dumps(_base_data(mock_station_id)).replace(" ", "")}|b7288bcac962668e493e5eaf0feeb965007f4e75|1".encode(
-            "ascii"
-        )
-    )
+    base_data = json.dumps(_base_data(mock_station_id)).replace(" ", "")
+
+    base_data_signed = f"{base_data}|b7288bcac962668e493e5eaf0feeb965007f4e75|1"
+
+    return MockRequest(payload=base_data_signed.encode("ascii"))
 
 
 @pytest.fixture
 def mock_aiq_request_scd41_from_end_device(mock_station_id: int) -> MockRequest:
     """Don't forget to update the signature if you change the data"""
 
-    return MockRequest(
-        payload=f"{json.dumps(_base_data(mock_station_id)).replace(" ", "")}|b7288bcac962668e493e5eaf0feeb965007f4e75".encode("ascii")
-    )
+    base_data = json.dumps(_base_data(mock_station_id)).replace(" ", "")
+
+    base_data_signed = f"{base_data}|b7288bcac962668e493e5eaf0feeb965007f4e75"
+
+    return MockRequest(payload=base_data_signed.encode("ascii"))

@@ -14,6 +14,7 @@ Last Date: {}
 {}
 {}
 {}
+{}
 border_router_id: {}
 station_id: {}
 """
@@ -46,6 +47,13 @@ BME688:
 \thum: {} H%
 \tpress: {} KPa
 \tgasres: {} Ohm
+"""
+
+SFA30_SUMMARY_TEMPLATE = """
+SFA30:
+\hco: {} ppb
+\ttemp: {} C
+\thum: {} H%
 """
 
 
@@ -92,6 +100,16 @@ def _render_summary_template(data: StationData, count: int) -> str:
         else ""
     )
 
+    sfa30_summary = (
+        SFA30_SUMMARY_TEMPLATE.format(
+            int(data.sfa30_data.hco) / 1000000,
+            int(data.sfa30_data.temperature) / 1000000,
+            int(data.sfa30_data.humidity) / 1000000,
+        )
+        if data.sfa30_data is not None
+        else ""
+    )
+
     return SUMMARY_TEMPLATE.format(
         count,
         datetime.fromtimestamp(float(data.timestamp), timezone.utc).strftime(r"%d/%m/%Y, %H:%M:%S"),
@@ -99,6 +117,7 @@ def _render_summary_template(data: StationData, count: int) -> str:
         ens160_summary,
         svm41_summary,
         bme688_summary,
+        sfa30_summary,
         data.border_router_id,
         data.station_id,
     )
