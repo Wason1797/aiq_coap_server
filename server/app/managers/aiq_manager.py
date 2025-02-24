@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlalchemy import delete, func, select
 
-from app.repositories.db.models import BME688Data, ENS160Data, SCD41Data, StationData, SVM41Data
+from app.repositories.db.models import BME688Data, ENS160Data, SCD41Data, SFA30Data, StationData, SVM41Data
 from app.serializers.request import AiqDataFromStation
 from app.types import AsyncSessionMaker
 
@@ -141,6 +141,13 @@ class AiqDataManager:
                 humidity=data.bme688_d.hum.to_str_number(),
                 pressure=data.bme688_d.press.to_str_number(),
                 gas_resistance=data.bme688_d.gasres.to_str_number(),
+            )
+
+        if data.sfa30_d:
+            sensor_data.sfa30_data = SFA30Data(
+                hco=data.sfa30_d.hco.to_str_number(),
+                temperature=data.sfa30_d.temp.to_str_number(),
+                humidity=data.sfa30_d.hum.to_str_number(),
             )
 
         async with session_maker() as session:

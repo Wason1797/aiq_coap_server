@@ -83,6 +83,7 @@ class StationData(BaseDBConnector.Base):
     ens160_data: Mapped[ENS160Data] = relationship("ENS160Data", lazy="joined")
     svm41_data: Mapped[SVM41Data] = relationship("SVM41Data", lazy="joined")
     bme688_data: Mapped[BME688Data] = relationship("BME688Data", lazy="joined")
+    sfa30_data: Mapped[SFA30Data] = relationship("SFA30Data", lazy="joined")
 
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_station_data"),)
 
