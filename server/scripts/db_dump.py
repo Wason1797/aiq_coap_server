@@ -110,7 +110,7 @@ async def main() -> None:
     session = MysqlConnector.get_session()
     batch_id = -1
 
-    with open(f"./dump_{current_timestamp}", "a") as csv_dump:
+    with open(f"./dump_{current_timestamp}.csv", "a") as csv_dump:
         writer = csv.DictWriter(csv_dump, fieldnames=CSV_HEADERS)
         writer.writeheader()
 
