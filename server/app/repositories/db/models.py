@@ -66,11 +66,11 @@ class StationData(BaseDBConnector.Base):
 
     id: Mapped[int] = mapped_column(INTEGER(), primary_key=True, autoincrement=True, nullable=False, index=True)
 
-    scd41_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("scd41_data.id"), nullable=True)
-    ens160_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("ens160_data.id"), nullable=True)
-    svm41_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("svm41_data.id"), nullable=True)
-    bme688_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("bme688_data.id"), nullable=True)
-    sfa30_data_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("sfa30_data.id"), nullable=True)
+    scd41_data_id: Mapped[int | None] = mapped_column(INTEGER(), ForeignKey("scd41_data.id"), nullable=True)
+    ens160_data_id: Mapped[int | None] = mapped_column(INTEGER(), ForeignKey("ens160_data.id"), nullable=True)
+    svm41_data_id: Mapped[int | None] = mapped_column(INTEGER(), ForeignKey("svm41_data.id"), nullable=True)
+    bme688_data_id: Mapped[int | None] = mapped_column(INTEGER(), ForeignKey("bme688_data.id"), nullable=True)
+    sfa30_data_id: Mapped[int | None] = mapped_column(INTEGER(), ForeignKey("sfa30_data.id"), nullable=True)
 
     # Id of the individual sensor station submitting the data
     station_id: Mapped[int] = mapped_column(INTEGER(), ForeignKey("stations.id"), nullable=False, index=True)
@@ -79,11 +79,13 @@ class StationData(BaseDBConnector.Base):
 
     timestamp: Mapped[str] = mapped_column(VARCHAR(20), nullable=False, index=True)
 
-    scd41_data: Mapped[SCD41Data] = relationship("SCD41Data", lazy="joined")
-    ens160_data: Mapped[ENS160Data] = relationship("ENS160Data", lazy="joined")
-    svm41_data: Mapped[SVM41Data] = relationship("SVM41Data", lazy="joined")
-    bme688_data: Mapped[BME688Data] = relationship("BME688Data", lazy="joined")
-    sfa30_data: Mapped[SFA30Data] = relationship("SFA30Data", lazy="joined")
+    scd41_data: Mapped[SCD41Data | None] = relationship("SCD41Data", lazy="joined")
+    ens160_data: Mapped[ENS160Data | None] = relationship("ENS160Data", lazy="joined")
+    svm41_data: Mapped[SVM41Data | None] = relationship("SVM41Data", lazy="joined")
+    bme688_data: Mapped[BME688Data | None] = relationship("BME688Data", lazy="joined")
+    sfa30_data: Mapped[SFA30Data | None] = relationship("SFA30Data", lazy="joined")
+
+    station: Mapped["Station"] = relationship("Station")
 
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_station_data"),)
 

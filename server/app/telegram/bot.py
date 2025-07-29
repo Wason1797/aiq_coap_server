@@ -1,6 +1,6 @@
 import logging
 import traceback
-from functools import wraps
+from functools import partial, wraps
 from typing import Awaitable, Callable, Iterable, Optional, TypeVarTuple
 
 from aiogram import Bot, Dispatcher
@@ -10,7 +10,7 @@ from aiogram.types import Message
 from aiogram.client.default import DefaultBotProperties
 
 Params = TypeVarTuple("Params")
-ManagementBotCallback = Callable[[*Params], Awaitable[str]]
+ManagementBotCallback = Callable[[*Params], Awaitable[str]] | partial[Awaitable[str]]
 
 
 class ManagementBot:
