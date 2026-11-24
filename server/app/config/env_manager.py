@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     WRITE_TO_BACKUP: bool = True
     MAIN_SERVER_URI: Optional[str] = None
     BIND: Optional[str] = None
+    EMPTY_ACK_DELAY: float = 2.0
 
     model_config = SettingsConfigDict(env_file=".env")
 

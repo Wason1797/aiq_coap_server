@@ -12,6 +12,7 @@ from app.managers.aiq_manager import AiqDataManager
 from app.managers.br_manager import BorderRouterManager
 from app.managers.station_manager import StationManager
 from app.repositories.aiq_coap.client import CoapClient
+from app.repositories.aiq_coap.tuning import create_coap_server_context
 from app.repositories.mysql.database import MysqlConnector
 from app.repositories.postgres.database import PostgresqlConnector
 from app.resources import StationDataStorageResource, IndexResource
@@ -39,8 +40,11 @@ async def main() -> None:
     PayloadValidator.init_validator(EnvManager.SECRET_KEY)
 
     log.info("Initializing COAP resources")
-    binds = (EnvManager.BIND or "localhost", None) if EnvManager.is_dev() else None
-    main_coap_context = await aiocoap.Context.create_server_context(None, bind=binds)
+    main_coap_context = await create_coap_server_context(
+        empty_ack_delay=EnvManager.EMPTY_ACK_DELAY,
+        bind_ip=EnvManager.BIND,
+        is_dev=EnvManager.is_dev(),
+    )
 
     server = resource.Site()
     aiq_data_resource = None
